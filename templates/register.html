@@ -1,0 +1,169 @@
+<!-- templates/register.html -->
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<style>
+    /* 🌈 Анимированный градиентный фон */
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+        background-size: 400% 400%;
+        animation: gradientShift 10s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Контейнер для центрирования */
+    .center-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* 💎 Карточка */
+    .register-card {
+        width: 400px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        padding: 2.5rem;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        transform: translateY(0);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        animation: fadeIn 1s ease-out;
+        margin-bottom: 30px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .register-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 🏫 Логотип */
+    .logo img {
+        width: 80px;
+        height: 80px;
+        transition: transform 0.4s ease;
+    }
+
+    .logo img:hover {
+        transform: rotate(10deg) scale(1.05);
+    }
+
+    .college-title {
+        font-weight: 600;
+        color: #003366;
+        margin-bottom: 1.5rem;
+    }
+
+    /* 🔘 Кнопка */
+    .btn-primary {
+        background-color: #003366;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0055cc;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(0, 85, 204, 0.5);
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #003366;
+        text-align: left;
+    }
+
+    a {
+        color: #0066cc;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #003366;
+        text-decoration: underline;
+    }
+
+    /* Футер */
+    .footer {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 20px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        margin-top: auto;
+    }
+</style>
+
+<div class="center-container">
+    <div class="register-card">
+        <div class="logo mb-3">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+        </div>
+        <h5 class="college-title">Регистрация<br>Финансово-экономический колледж РИНХ</h5>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ msg }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('auth.register') }}" method="POST">
+            <div class="mb-3 text-start">
+                <label for="full_name" class="form-label">ФИО</label>
+                <input type="text" class="form-control" name="full_name" id="full_name" required>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label for="phone" class="form-label">Телефон</label>
+                <input type="text" class="form-control" name="phone" id="phone" required>
+                <small class="text-muted">Будет использоваться для входа</small>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" name="password" id="password" required>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('auth.login') }}">Уже есть аккаунт? Войти</a>
+        </div>
+    </div>
+</div>
+
+<!-- Футер -->
+<div class="footer">
+    © 2025г. Финансово-экономический колледж (РИНХ)
+</div>
+{% endblock %}

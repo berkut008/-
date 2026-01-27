@@ -1,0 +1,642 @@
+<!-- templates/confirm_users.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подтверждение пользователей | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Текст на заднем фоне */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      body::before {
+        background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+      }
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      color: white;
+      text-decoration: none;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .dashboard-container {
+      width: 100%;
+      max-width: 1200px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      color: #000;
+      animation: fadeIn 0.8s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      z-index: 4;
+      margin: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .form-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .form-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      color: #003366;
+      margin: 2rem 0 1rem 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      font-weight: 600;
+    }
+
+    .table-responsive {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      margin: 0;
+      width: 100%;
+    }
+
+    thead {
+      background: linear-gradient(90deg, #003366, #0073e6);
+      color: white;
+    }
+
+    th {
+      padding: 1rem !important;
+      font-weight: 600;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    td {
+      padding: 1rem !important;
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(0, 51, 102, 0.05);
+      transition: background-color 0.3s ease;
+    }
+
+    .badge-status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .badge-pending {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    .user-role-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+      display: inline-block;
+    }
+    
+    .role-curator {
+      background-color: #6f42c1;
+      color: white;
+    }
+    
+    .role-leader {
+      background-color: #20c997;
+      color: white;
+    }
+
+    .btn-confirm {
+      background: linear-gradient(135deg, #198754, #20c997);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin: 2px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(25, 135, 84, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-reject {
+      background: linear-gradient(135deg, #dc3545, #e35d6a);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      margin: 2px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-reject:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-back {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+      background: linear-gradient(135deg, #0073e6, #003366);
+      color: white;
+      text-decoration: none;
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-info {
+      background: rgba(33, 150, 243, 0.1);
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    /* Анимации */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+      
+      th, td {
+        padding: 0.75rem !important;
+        font-size: 0.9rem;
+      }
+      
+      .btn-confirm, .btn-reject {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        margin: 1px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .btn-confirm, .btn-reject {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+      <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+        <span class="icon"></span>
+        Выйти
+      </a>
+    </div>
+  </header>
+
+  <!-- Основное содержимое -->
+  <div class="main-content">
+    <div class="dashboard-container">
+      <div class="form-header">
+        <h1 class="form-title">
+          ✅ Подтверждение пользователей
+        </h1>
+        <p class="form-subtitle">
+          Подтверждение кураторов и старост, ожидающих регистрации
+        </p>
+      </div>
+
+      <!-- Сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <span class="icon me-2">
+                  {% if category == 'success' %}✅
+                  {% elif category == 'danger' %}❌
+                  {% elif category == 'warning' %}⚠️
+                  {% else %}ℹ️
+                  {% endif %}
+                </span>
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Пользователи, ожидающие подтверждения -->
+      {% if users %}
+      <h4 class="section-title">⏳ Пользователи, ожидающие подтверждения</h4>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>ФИО</th>
+              <th>Роль</th>
+              <th>Телефон</th>
+              <th>Telegram</th>
+              <th>Email</th>
+              <th>Дата регистрации</th>
+              <th class="text-center">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr style="animation-delay: {{ loop.index * 0.05 }}s">
+              <td>{{ user.full_name }}</td>
+              <td>
+                {% if user.role == 'curator' %}
+                  <span class="user-role-badge role-curator">Куратор</span>
+                {% else %}
+                  <span class="user-role-badge role-leader">Староста</span>
+                {% endif %}
+              </td>
+              <td>{{ user.phone }}</td>
+              <td>{{ user.telegram or '—' }}</td>
+              <td>{{ user.email or '—' }}</td>
+              <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') if user.created_at else '—' }}</td>
+              <td class="text-center">
+                <a href="{{ url_for('dashboard.confirm_user', user_id=user.id) }}" 
+                   class="btn-confirm" 
+                   onclick="return confirm('Подтвердить пользователя {{ user.full_name }}?')">
+                  ✅ Подтвердить
+                </a>
+                <a href="{{ url_for('dashboard.reject_user', user_id=user.id) }}" 
+                   class="btn-reject" 
+                   onclick="return confirm('Отклонить заявку пользователя {{ user.full_name }}?')">
+                  ❌ Отклонить
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-success">
+        <h5>✅ Все пользователи подтверждены</h5>
+        <p>Нет пользователей, ожидающих подтверждения.</p>
+      </div>
+      {% endif %}
+
+      <div class="text-center mt-4">
+        <a href="{{ url_for('dashboard.admin_dashboard') }}" class="btn-back">
+          <span class="icon">⬅</span>
+          Назад в панель администратора
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <!-- Футер -->
+  <div class="footer">
+    <div class="footer-text">
+      © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Анимация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      const dashboardContainer = document.querySelector('.dashboard-container');
+      dashboardContainer.style.opacity = '0';
+      dashboardContainer.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        dashboardContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        dashboardContainer.style.opacity = '1';
+        dashboardContainer.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+      
+      // Анимация строк таблицы
+      const tableRows = document.querySelectorAll('tbody tr');
+      tableRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          row.style.transition = 'all 0.5s ease';
+          row.style.opacity = '1';
+          row.style.transform = 'translateY(0)';
+        }, 600 + (index * 50));
+      });
+      
+      // Анимация кнопки "Назад"
+      const backButton = document.querySelector('.btn-back');
+      backButton.style.opacity = '0';
+      backButton.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        backButton.style.transition = 'all 0.5s ease';
+        backButton.style.opacity = '1';
+        backButton.style.transform = 'translateY(0)';
+      }, 1000);
+    });
+    
+    // Подтверждение действий
+    function confirmAction(action, userId, userName) {
+      return confirm(`Вы уверены, что хотите ${action} пользователя "${userName}"?`);
+    }
+    
+    // Показываем уведомление
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+          <span class="icon me-2">${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+          <div>${message}</div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      // Вставляем уведомление перед контейнером
+      const dashboardContainer = document.querySelector('.dashboard-container');
+      dashboardContainer.parentNode.insertBefore(alertDiv, dashboardContainer);
+      
+      // Автоматическое скрытие через 5 секунд
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          const bsAlert = new bootstrap.Alert(alertDiv);
+          bsAlert.close();
+        }
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

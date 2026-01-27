@@ -1,0 +1,1976 @@
+<!-- templates/student_analytics.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Аналитика по студентам | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Текст на заднем фоне */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      body::before {
+        background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+      }
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .analytics-container {
+      width: 100%;
+      max-width: 1600px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      color: #000;
+      animation: fadeIn 0.8s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      z-index: 4;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .analytics-title-section {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .analytics-title-section::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .analytics-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .search-container {
+      background: rgba(0, 51, 102, 0.08);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border-left: 4px solid #0073e6;
+      animation: fadeIn 0.7s ease;
+    }
+
+    .search-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .search-inputs {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .search-input {
+      border: 2px solid #003366;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.95);
+      font-size: 16px;
+      min-width: 250px;
+    }
+
+    .search-input:focus {
+      border-color: #0073e6;
+      box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+      background: #fff;
+      outline: none;
+    }
+
+    .search-select {
+      border: 2px solid #003366;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.95);
+      font-size: 16px;
+      min-width: 200px;
+      cursor: pointer;
+    }
+
+    /* Новые стили для периода */
+    .period-container {
+      background: rgba(0, 51, 102, 0.08);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border-left: 4px solid #20c997;
+      animation: fadeIn 0.7s ease;
+    }
+
+    .period-title {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .period-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .period-btn {
+      padding: 10px 20px;
+      border: 2px solid #003366;
+      background: white;
+      color: #003366;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 0.95rem;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .period-btn.active {
+      background: #003366;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+    }
+
+    .period-btn:hover:not(.active) {
+      background: rgba(0, 51, 102, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .date-range-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .date-range-label {
+      color: #003366;
+      font-weight: 600;
+      min-width: 100px;
+    }
+
+    .date-inputs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .date-input {
+      border: 2px solid #003366;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.95);
+      font-size: 16px;
+      min-width: 150px;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #003366;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      color: #003366;
+      text-decoration: none;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      text-align: center;
+      min-width: 180px;
+      justify-content: center;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+      background: linear-gradient(135deg, #0073e6, #003366);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-action:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-search {
+      background: linear-gradient(135deg, #0073e6, #003366);
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      color: white;
+      padding: 0.75rem 2rem;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .btn-search:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 115, 230, 0.4);
+    }
+
+    .btn-search:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-back {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-back:hover {
+      background: linear-gradient(135deg, #495057, #6c757d);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+      color: white;
+      text-decoration: none;
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-danger {
+      background: rgba(244, 67, 54, 0.1);
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .alert-warning {
+      background: rgba(255, 152, 0, 0.1);
+      color: #ef6c00;
+      border-left: 4px solid #ff9800;
+    }
+
+    .alert-info {
+      background: rgba(33, 150, 243, 0.1);
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.9s ease;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      color: white;
+    }
+
+    th {
+      padding: 1.2rem 1rem !important;
+      text-align: center;
+      font-weight: 600;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      vertical-align: middle;
+    }
+
+    th:hover {
+      background: linear-gradient(135deg, #002244, #0055aa);
+    }
+
+    tbody tr {
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.98);
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 51, 102, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+      padding: 1rem !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      color: #333;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .text-success {
+      color: #198754 !important;
+      font-weight: 600;
+    }
+
+    .text-danger {
+      color: #dc3545 !important;
+      font-weight: 600;
+    }
+
+    .text-warning {
+      color: #fd7e14 !important;
+      font-weight: 600;
+    }
+
+    .text-muted {
+      color: #666 !important;
+    }
+
+    .table-responsive {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      margin-top: 1.5rem;
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 2rem;
+      color: #003366;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 51, 102, 0.1);
+      border-left-color: #003366;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .no-data-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .progress {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      height: 20px;
+      width: 100%;
+      max-width: 150px;
+      margin: 0 auto;
+    }
+
+    .progress-bar {
+      transition: width 0.6s ease;
+    }
+
+    .percent-value {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .percent-value.excused {
+      color: #198754;
+    }
+
+    .percent-value.unexcused {
+      color: #dc3545;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #003366;
+    }
+
+    .user-contact {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    /* Групповая статистика */
+    .group-stats-container {
+      background: rgba(0, 51, 102, 0.05);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 51, 102, 0.1);
+      animation: fadeIn 0.7s ease;
+    }
+
+    .group-stats-title {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .group-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .group-stat-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #0073e6;
+      transition: all 0.3s ease;
+    }
+
+    .group-stat-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 115, 230, 0.2);
+    }
+
+    .group-stat-name {
+      font-weight: 600;
+      color: #003366;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .group-stat-numbers {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .group-stat-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .group-stat-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    /* Информационная плашка */
+    .info-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffc107, #fd7e14);
+      color: #000;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-badge.blue {
+      background: linear-gradient(135deg, #0073e6, #003366);
+      color: white;
+    }
+
+    .info-badge.green {
+      background: linear-gradient(135deg, #20c997, #198754);
+      color: white;
+    }
+
+    /* Сортировка */
+    th.sorted-asc::after {
+      content: " ↑";
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
+
+    th.sorted-desc::after {
+      content: " ↓";
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
+
+    /* Статистика по часам */
+    .hours-info {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* Проценты в ячейках */
+    .percent-cell {
+      min-width: 120px;
+    }
+
+    .percent-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .percent-label {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .percent-number {
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      min-width: 70px;
+      display: inline-block;
+    }
+
+    .percent-number.excused {
+      background-color: rgba(25, 135, 84, 0.1);
+      color: #198754;
+      border: 1px solid rgba(25, 135, 84, 0.3);
+    }
+
+    .percent-number.unexcused {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .progress-comparison {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    .progress-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .progress-label.excused {
+      color: #198754;
+    }
+
+    .progress-label.unexcused {
+      color: #dc3545;
+    }
+
+    @media (max-width: 1200px) {
+      .analytics-container {
+        max-width: 95%;
+      }
+      
+      th, td {
+        padding: 0.8rem !important;
+        font-size: 0.9rem;
+      }
+      
+      .percent-number {
+        font-size: 1rem;
+        padding: 4px 10px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .search-inputs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .period-buttons {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .analytics-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .search-inputs {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .search-input, .search-select, .date-input {
+        min-width: 100%;
+        width: 100%;
+      }
+      
+      .period-buttons {
+        flex-direction: column;
+      }
+      
+      .period-btn {
+        width: 100%;
+      }
+      
+      .date-range-container {
+        flex-direction: column;
+      }
+      
+      .btn-nav, .btn-back, .btn-search, .btn-action {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      th, td {
+        padding: 0.75rem !important;
+        font-size: 0.85rem;
+      }
+      
+      .group-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      /* Адаптация таблицы для мобильных */
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      table {
+        min-width: 800px;
+      }
+      
+      .percent-number {
+        font-size: 0.9rem;
+        padding: 3px 8px;
+      }
+      
+      .progress-label {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .analytics-title {
+        font-size: 1.5rem;
+      }
+      
+      .search-container {
+        padding: 1rem;
+      }
+      
+      .btn-action {
+        width: 100%;
+        min-width: auto;
+      }
+      
+      .group-stat-numbers {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .percent-display {
+        gap: 5px;
+      }
+      
+      .progress-comparison {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .progress-label {
+        text-align: center;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+      <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <div class="header-actions">
+      <!-- Кнопка выхода с белым фоном -->
+      <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+        <span class="icon"></span>
+        Выйти
+      </a>
+    </div>
+  </header>
+
+  <!-- Основное содержимое -->
+  <div class="main-content">
+    <div class="analytics-container">
+      <div class="analytics-title-section">
+        <h1 class="analytics-title">
+          📊 Аналитика по студентам
+        </h1>
+        <p class="form-subtitle">
+          Статистика посещаемости студентов по группам и кураторам с выбором периода
+        </p>
+        
+        <!-- Информация о роли -->
+        <div style="margin-top: 10px;">
+          {% if user.role == 'admin' %}
+            <span class="info-badge blue">Режим: Администратор (полный доступ)</span>
+          {% elif user.role == 'curator' %}
+            <span class="info-badge green">Режим: Куратор (ваши группы)</span>
+          {% else %}
+            <span class="info-badge">Режим: Староста (ваша группа)</span>
+          {% endif %}
+          <span class="info-badge">1 пара = 2 часа</span>
+        </div>
+      </div>
+
+      <!-- Сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <span class="icon me-2">
+                  {% if category == 'success' %}✅
+                  {% elif category == 'danger' %}❌
+                  {% elif category == 'warning' %}⚠️
+                  {% else %}ℹ️
+                  {% endif %}
+                </span>
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Блок выбора периода -->
+      <div class="period-container">
+        <div class="period-title">📅 Выберите период для анализа:</div>
+        <div class="period-buttons" id="periodButtons">
+          <button type="button" class="period-btn active" data-period="week">За неделю</button>
+          <button type="button" class="period-btn" data-period="month">За месяц</button>
+          <button type="button" class="period-btn" data-period="semester">За семестр</button>
+          <button type="button" class="period-btn" data-period="year">За год</button>
+          <button type="button" class="period-btn" data-period="all">За всё время</button>
+          <button type="button" class="period-btn" data-period="custom">Произвольный</button>
+        </div>
+        
+        <!-- Произвольный диапазон дат -->
+        <div id="customDateRange" class="date-range-container" style="display: none;">
+          <div class="date-range-label">Диапазон дат:</div>
+          <div class="date-inputs">
+            <input type="date" id="custom_start_date" class="date-input" placeholder="Начальная дата">
+            <span style="align-self: center;">—</span>
+            <input type="date" id="custom_end_date" class="date-input" placeholder="Конечная дата">
+            <button type="button" id="applyCustomDate" class="btn-search" style="padding: 0.5rem 1rem; min-width: 100px;">
+              Применить
+            </button>
+          </div>
+        </div>
+        
+        <!-- Информация о текущем периоде -->
+        <div id="periodInfo" class="hours-info">
+          {% if request.args.get('start_date') and request.args.get('end_date') %}
+            Период: с {{ request.args.get('start_date') }} по {{ request.args.get('end_date') }}
+          {% else %}
+            Период не выбран
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Форма поиска -->
+      <div class="search-container">
+        <div class="search-form">
+          <div class="search-inputs">
+            <!-- Поле ФИО студента для всех ролей -->
+            <input type="text" id="studentName" class="search-input" 
+                   placeholder="ФИО студента..." value="{{ request.args.get('student_name', '') }}">
+            
+            <!-- Поле номер группы -->
+            {% if user.role == 'admin' or user.role == 'curator' %}
+            <input type="text" id="groupName" class="search-input" 
+                   placeholder="Номер группы..." value="{{ request.args.get('group_name', '') }}">
+            {% else %}
+            <!-- Для старосты показываем только его группу -->
+            {% set leader_group = user.get_leader_group() %}
+            <input type="text" id="groupName" class="search-input" 
+                   placeholder="Номер группы..." value="{{ leader_group.name if leader_group else '' }}" readonly>
+            {% endif %}
+            
+            <!-- Поле выбора куратора ТОЛЬКО для администратора -->
+            {% if user.role == 'admin' and curators %}
+            <select id="curatorSelect" class="search-select">
+              <option value="">Все кураторы</option>
+              {% for curator in curators %}
+              <option value="{{ curator.id }}" {% if request.args.get('curator_id')|string == curator.id|string %}selected{% endif %}>
+                {{ curator.name if curator.name else curator.full_name }}
+              </option>
+              {% endfor %}
+            </select>
+            {% endif %}
+            
+            <!-- Поле выбора старосты ТОЛЬКО для администратора -->
+            {% if user.role == 'admin' and leaders %}
+            <select id="leaderSelect" class="search-select">
+              <option value="">Все старосты</option>
+              {% for leader in leaders %}
+              <option value="{{ leader.id }}" {% if request.args.get('leader_id')|string == leader.id|string %}selected{% endif %}>
+                {{ leader.name if leader.name else leader.full_name }}
+              </option>
+              {% endfor %}
+            </select>
+            {% endif %}
+          </div>
+          
+          <button type="button" id="searchButton" class="btn-search">
+            <span class="icon">🔍</span>
+            Найти студентов
+          </button>
+        </div>
+      </div>
+
+      <!-- Групповая статистика (только при наличии данных) -->
+      {% if group_stats and user.role == 'admin' %}
+      <div class="group-stats-container">
+        <div class="group-stats-title">📊 Статистика по группам:</div>
+        <div class="group-stats-grid">
+          {% for group_stat in group_stats %}
+          <div class="group-stat-item">
+            <div class="group-stat-name">{{ group_stat.group_name }}</div>
+            <div class="group-stat-numbers">
+              <div>
+                <div class="group-stat-number">{{ group_stat.total_absences }}</div>
+                <div class="group-stat-label">Всего</div>
+              </div>
+              <div>
+                <div class="group-stat-number text-success">{{ group_stat.excused }}</div>
+                <div class="group-stat-label">Уваж.</div>
+              </div>
+              <div>
+                <div class="group-stat-number text-danger">{{ group_stat.unexcused }}</div>
+                <div class="group-stat-label">Неуваж.</div>
+              </div>
+              <div>
+                <div class="group-stat-number">
+                  {% set total = group_stat.excused + group_stat.unexcused %}
+                  {% if total > 0 %}
+                    {{ (group_stat.excused / total * 100)|round|int }}%
+                  {% else %}
+                    0%
+                  {% endif %}
+                </div>
+                <div class="group-stat-label">% уваж.</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Таблица результатов -->
+      <div id="resultsContainer">
+        {% if student_data %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle" id="analyticsTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable(0)">Студент</th>
+                <th onclick="sortTable(1)">Группа</th>
+                {% if user.role == 'admin' %}
+                <th onclick="sortTable(2)">Куратор</th>
+                <th onclick="sortTable(3)">Староста</th>
+                {% endif %}
+                <th onclick="sortTable(4)">Всего пропусков</th>
+                <th onclick="sortTable(5)">Уважительных</th>
+                <th onclick="sortTable(6)">Неуважительных</th>
+                <th onclick="sortTable(7)">Процент уважительных</th>
+                <th onclick="sortTable(8)">Процент неуважительных</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsTableBody">
+              {% for s in student_data %}
+              {% set total = s.excused + s.unexcused %}
+              {% set excused_percent = (s.excused / total * 100)|round|int if total > 0 else 0 %}
+              {% set unexcused_percent = (s.unexcused / total * 100)|round|int if total > 0 else 0 %}
+              
+              <tr class="user-row" style="animation-delay: {{ loop.index * 0.05 }}s">
+                <td><strong>{{ s.student_name }}</strong></td>
+                <td>{{ s.group_name }}</td>
+                {% if user.role == 'admin' %}
+                <td>{{ s.curator_name if s.curator_name else '-' }}</td>
+                <td>{{ s.leader_name if s.leader_name else '-' }}</td>
+                {% endif %}
+                <td>
+                  <strong>{{ s.total_absences }}</strong>
+                  <div class="hours-info">({{ "%.2f"|format(s.total_absences * 2) }} ч.)</div>
+                </td>
+                <td class="text-success">
+                  {{ s.excused }}
+                  <div class="hours-info">({{ "%.2f"|format(s.excused * 2) }} ч.)</div>
+                </td>
+                <td class="text-danger">
+                  {{ s.unexcused }}
+                  <div class="hours-info">({{ "%.2f"|format(s.unexcused * 2) }} ч.)</div>
+                </td>
+                <td class="percent-cell">
+                  <div class="percent-display">
+                    <div class="progress-comparison">
+                      <span class="progress-label excused">У:</span>
+                      <div class="progress">
+                        <div class="progress-bar bg-success" 
+                             role="progressbar" 
+                             style="width: {{ excused_percent }}%"
+                             aria-valuenow="{{ excused_percent }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="percent-number excused">{{ excused_percent }}%</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="percent-cell">
+                  <div class="percent-display">
+                    <div class="progress-comparison">
+                      <span class="progress-label unexcused">Н:</span>
+                      <div class="progress">
+                        <div class="progress-bar bg-danger" 
+                             role="progressbar" 
+                             style="width: {{ unexcused_percent }}%"
+                             aria-valuenow="{{ unexcused_percent }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="percent-number unexcused">{{ unexcused_percent }}%</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="no-data">
+          <div class="no-data-icon">📊</div>
+          <h4>Данные не найдены</h4>
+          <p>Введите критерии поиска для отображения статистики студентов</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Кнопки действий -->
+      <div class="action-buttons-container" style="display: flex; justify-content: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid rgba(0, 51, 102, 0.1);">
+        {% if user.role == 'admin' %}
+          <a href="{{ url_for('dashboard.admin_dashboard') }}" class="btn-action btn-back">
+            <span class="icon">⬅</span>
+            Вернуться в панель администратора
+          </a>
+        {% else %}
+          <a href="{{ url_for('dashboard.index') }}" class="btn-action btn-back">
+            <span class="icon">⬅</span>
+            Назад в панель управления
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <!-- Футер -->
+  <div class="footer">
+    <div class="footer-text">
+      © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Глобальные переменные
+      let currentSortColumn = null;
+      let currentSortDirection = 'asc';
+      let currentPeriod = 'week';
+      let currentStartDate = '';
+      let currentEndDate = '';
+      
+      // Элементы
+      const searchButton = document.getElementById('searchButton');
+      const studentNameInput = document.getElementById('studentName');
+      const groupNameInput = document.getElementById('groupName');
+      const resultsContainer = document.getElementById('resultsContainer');
+      const periodButtons = document.querySelectorAll('.period-btn');
+      const customDateRange = document.getElementById('customDateRange');
+      const customStartDate = document.getElementById('custom_start_date');
+      const customEndDate = document.getElementById('custom_end_date');
+      const applyCustomDate = document.getElementById('applyCustomDate');
+      const periodInfo = document.getElementById('periodInfo');
+      
+      // Элементы только для администратора
+      let curatorSelect = null;
+      let leaderSelect = null;
+      
+      if (document.getElementById('curatorSelect')) {
+        curatorSelect = document.getElementById('curatorSelect');
+      }
+      if (document.getElementById('leaderSelect')) {
+        leaderSelect = document.getElementById('leaderSelect');
+      }
+      
+      // Инициализация периодов из URL
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('start_date') && urlParams.has('end_date')) {
+        currentStartDate = urlParams.get('start_date');
+        currentEndDate = urlParams.get('end_date');
+        updatePeriodInfo(currentStartDate, currentEndDate);
+      }
+      
+      // Анимация при загрузке
+      const analyticsContainer = document.querySelector('.analytics-container');
+      analyticsContainer.style.opacity = '0';
+      analyticsContainer.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        analyticsContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        analyticsContainer.style.opacity = '1';
+        analyticsContainer.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+      
+      // Анимация элементов поиска
+      const searchElements = document.querySelectorAll('.search-input, .search-select, .btn-search, .period-btn');
+      searchElements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          element.style.transition = 'all 0.5s ease';
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
+        }, 400 + (index * 100));
+      });
+      
+      // Обработчики кнопок периода
+      periodButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const period = this.getAttribute('data-period');
+          
+          // Убираем активный класс со всех кнопок
+          periodButtons.forEach(b => b.classList.remove('active'));
+          // Добавляем активный класс текущей кнопке
+          this.classList.add('active');
+          
+          currentPeriod = period;
+          
+          // Показываем/скрываем произвольный диапазон
+          if (period === 'custom') {
+            customDateRange.style.display = 'flex';
+            return;
+          } else {
+            customDateRange.style.display = 'none';
+          }
+          
+          // Устанавливаем даты в зависимости от периода
+          setDatesByPeriod(period);
+          
+          // Выполняем поиск
+          searchStudents();
+        });
+      });
+      
+      // Функция установки дат по периоду
+      function setDatesByPeriod(period) {
+        const today = new Date();
+        let startDate = new Date();
+        
+        switch(period) {
+          case 'week':
+            startDate.setDate(today.getDate() - 7);
+            break;
+          case 'month':
+            startDate.setMonth(today.getMonth() - 1);
+            break;
+          case 'semester':
+            // Семестр = 4 месяца
+            startDate.setMonth(today.getMonth() - 4);
+            break;
+          case 'year':
+            startDate.setFullYear(today.getFullYear() - 1);
+            break;
+          case 'all':
+            // За всё время - устанавливаем дату 2 года назад
+            startDate.setFullYear(today.getFullYear() - 2);
+            break;
+        }
+        
+        currentStartDate = startDate.toISOString().split('T')[0];
+        currentEndDate = today.toISOString().split('T')[0];
+        
+        updatePeriodInfo(currentStartDate, currentEndDate);
+      }
+      
+      // Обновление информации о периоде
+      function updatePeriodInfo(startDate, endDate) {
+        if (startDate && endDate) {
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          const diffTime = Math.abs(end - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          
+          let durationText = '';
+          if (diffDays === 1) {
+            durationText = '1 день';
+          } else if (diffDays < 7) {
+            durationText = `${diffDays} дня`;
+          } else if (diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            durationText = `${weeks} ${weeks === 1 ? 'неделя' : weeks < 5 ? 'недели' : 'недель'}`;
+          } else if (diffDays < 365) {
+            const months = Math.floor(diffDays / 30);
+            durationText = `${months} ${months === 1 ? 'месяц' : months < 5 ? 'месяца' : 'месяцев'}`;
+          } else {
+            const years = Math.floor(diffDays / 365);
+            durationText = `${years} ${years === 1 ? 'год' : years < 5 ? 'года' : 'лет'}`;
+          }
+          
+          periodInfo.innerHTML = `Период: с <strong>${startDate}</strong> по <strong>${endDate}</strong> • Длительность: ${durationText}`;
+        }
+      }
+      
+      // Обработчик произвольного диапазона
+      if (applyCustomDate) {
+        applyCustomDate.addEventListener('click', function() {
+          if (customStartDate.value && customEndDate.value) {
+            currentStartDate = customStartDate.value;
+            currentEndDate = customEndDate.value;
+            currentPeriod = 'custom';
+            updatePeriodInfo(currentStartDate, currentEndDate);
+            searchStudents();
+          } else {
+            showAlert('Пожалуйста, выберите обе даты', 'warning');
+          }
+        });
+      }
+      
+      // Функция поиска
+      async function searchStudents() {
+        const studentName = studentNameInput.value.trim();
+        const groupName = groupNameInput.value.trim();
+        
+        // Проверяем, выбран ли период
+        if (!currentStartDate || !currentEndDate) {
+          setDatesByPeriod('week');
+        }
+        
+        // Показываем загрузку
+        resultsContainer.innerHTML = `
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Поиск студентов...</p>
+          </div>
+        `;
+        
+        searchButton.disabled = true;
+        searchButton.innerHTML = '<span class="icon">⏳</span> Поиск...';
+        
+        try {
+          // Формируем параметры запроса
+          const params = new URLSearchParams();
+          if (studentName) params.append('student_name', studentName);
+          if (groupName) params.append('group_name', groupName);
+          params.append('start_date', currentStartDate);
+          params.append('end_date', currentEndDate);
+          
+          // Добавляем параметры для администратора
+          if (curatorSelect && curatorSelect.value) {
+            params.append('curator_id', curatorSelect.value);
+          }
+          if (leaderSelect && leaderSelect.value) {
+            params.append('leader_id', leaderSelect.value);
+          }
+          
+          // Отправляем запрос
+          console.log('Отправка запроса на /api/student-analytics с параметрами:', params.toString());
+          
+          // Пробуем разные варианты API endpoint
+          const apiEndpoints = [
+            '/api/student-analytics',
+            '/dashboard/api/student-analytics',
+            '/student-analytics/api'
+          ];
+          
+          let response = null;
+          let lastError = null;
+          
+          for (const endpoint of apiEndpoints) {
+            try {
+              console.log(`Пробуем endpoint: ${endpoint}`);
+              response = await fetch(`${endpoint}?${params.toString()}`, {
+                headers: {
+                  'Accept': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
+              });
+              
+              if (response.ok) {
+                console.log(`Успешный запрос к ${endpoint}`);
+                break;
+              }
+            } catch (err) {
+              lastError = err;
+              console.log(`Ошибка при запросе к ${endpoint}:`, err);
+              continue;
+            }
+          }
+          
+          if (!response || !response.ok) {
+            throw new Error(lastError?.message || `Ошибка сервера: ${response?.status || 'неизвестно'}`);
+          }
+          
+          const data = await response.json();
+          console.log('Получены данные:', data);
+          
+          // Обновляем таблицу с результатами
+          updateResultsTable(data);
+          
+        } catch (error) {
+          console.error('Ошибка поиска:', error);
+          
+          // Пробуем загрузить мок-данные для демонстрации
+          console.log('Пробуем загрузить мок-данные...');
+          loadMockData();
+          
+        } finally {
+          searchButton.disabled = false;
+          searchButton.innerHTML = '<span class="icon">🔍</span> Найти студентов';
+        }
+      }
+      
+      // Загрузка мок-данных для демонстрации
+      function loadMockData() {
+        const mockData = [
+          {
+            student_name: "Иванов Иван Иванович",
+            group_name: "П-21",
+            curator_name: "Петрова Мария Сергеевна",
+            leader_name: "Сидоров Алексей",
+            total_absences: 15,
+            excused: 10,
+            unexcused: 5
+          },
+          {
+            student_name: "Петрова Анна Викторовна",
+            group_name: "П-21",
+            curator_name: "Петрова Мария Сергеевна",
+            leader_name: "Сидоров Алексей",
+            total_absences: 8,
+            excused: 6,
+            unexcused: 2
+          },
+          {
+            student_name: "Сидоров Алексей Петрович",
+            group_name: "П-21",
+            curator_name: "Петрова Мария Сергеевна",
+            leader_name: "Сидоров Алексей",
+            total_absences: 12,
+            excused: 8,
+            unexcused: 4
+          },
+          {
+            student_name: "Кузнецова Елена Дмитриевна",
+            group_name: "Э-22",
+            curator_name: "Смирнов Игорь Владимирович",
+            leader_name: "Иванова Ольга",
+            total_absences: 5,
+            excused: 4,
+            unexcused: 1
+          },
+          {
+            student_name: "Морозов Дмитрий Александрович",
+            group_name: "Э-22",
+            curator_name: "Смирнов Игорь Владимирович",
+            leader_name: "Иванова Ольга",
+            total_absences: 20,
+            excused: 12,
+            unexcused: 8
+          }
+        ];
+        
+        updateResultsTable(mockData);
+        showAlert('Загружены демонстрационные данные. API endpoint временно недоступен.', 'warning');
+      }
+      
+      // Функция сортировки таблицы
+      function sortTable(columnIndex) {
+        const table = document.getElementById('analyticsTable');
+        if (!table) return;
+        
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        
+        // Определяем направление сортировки
+        if (currentSortColumn === columnIndex) {
+          currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSortColumn = columnIndex;
+          currentSortDirection = 'asc';
+        }
+        
+        // Убираем классы сортировки со всех заголовков
+        table.querySelectorAll('th').forEach(th => {
+          th.classList.remove('sorted-asc', 'sorted-desc');
+        });
+        
+        // Добавляем класс текущей сортировки
+        const headerCell = table.querySelector(`th:nth-child(${columnIndex + 1})`);
+        if (currentSortDirection === 'asc') {
+          headerCell.classList.add('sorted-asc');
+        } else {
+          headerCell.classList.add('sorted-desc');
+        }
+        
+        // Сортируем строки
+        rows.sort((a, b) => {
+          let aValue, bValue;
+          
+          if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 3) {
+            // Сортировка по тексту (ФИО, Группа, Куратор, Староста)
+            aValue = a.cells[columnIndex].textContent.trim().toLowerCase();
+            bValue = b.cells[columnIndex].textContent.trim().toLowerCase();
+          } else if (columnIndex === 4 || columnIndex === 5 || columnIndex === 6) {
+            // Сортировка по пропускам (извлекаем первое число)
+            const aText = a.cells[columnIndex].textContent.trim();
+            const bText = b.cells[columnIndex].textContent.trim();
+            
+            const aMatch = aText.match(/\d+/);
+            const bMatch = bText.match(/\d+/);
+            
+            aValue = aMatch ? parseInt(aMatch[0]) : 0;
+            bValue = bMatch ? parseInt(bMatch[0]) : 0;
+          } else {
+            // Сортировка по процентам (извлекаем число перед %)
+            const aPercentElement = a.cells[columnIndex].querySelector('.percent-number');
+            const bPercentElement = b.cells[columnIndex].querySelector('.percent-number');
+            
+            aValue = aPercentElement ? parseInt(aPercentElement.textContent) : 0;
+            bValue = bPercentElement ? parseInt(bPercentElement.textContent) : 0;
+          }
+          
+          let comparison = 0;
+          if (aValue > bValue) comparison = 1;
+          if (aValue < bValue) comparison = -1;
+          
+          return currentSortDirection === 'asc' ? comparison : -comparison;
+        });
+        
+        // Перестраиваем таблицу
+        rows.forEach((row, index) => {
+          setTimeout(() => {
+            row.style.transition = 'all 0.3s ease';
+            row.style.transform = 'translateY(0)';
+            tbody.appendChild(row);
+          }, index * 30);
+        });
+      }
+      
+      // Функция обновления таблицы
+      function updateResultsTable(data) {
+        if (!data || data.length === 0) {
+          resultsContainer.innerHTML = `
+            <div class="no-data">
+              <div class="no-data-icon">🔍</div>
+              <h4>Студенты не найдены</h4>
+              <p>Попробуйте изменить критерии поиска или период</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Определяем роль пользователя
+        const isAdmin = document.getElementById('curatorSelect') !== null;
+        
+        // Создаем таблицу
+        let html = `
+          <div class="table-responsive">
+            <table class="table table-hover align-middle" id="analyticsTable">
+              <thead>
+                <tr>
+                  <th onclick="window.sortTable(0)">Студент</th>
+                  <th onclick="window.sortTable(1)">Группа</th>
+        `;
+        
+        // Добавляем колонки для администратора
+        if (isAdmin) {
+          html += `
+                  <th onclick="window.sortTable(2)">Куратор</th>
+                  <th onclick="window.sortTable(3)">Староста</th>
+          `;
+        }
+        
+        html += `
+                  <th onclick="window.sortTable(${isAdmin ? 4 : 2})">Всего пропусков</th>
+                  <th onclick="window.sortTable(${isAdmin ? 5 : 3})">Уважительных</th>
+                  <th onclick="window.sortTable(${isAdmin ? 6 : 4})">Неуважительных</th>
+                  <th onclick="window.sortTable(${isAdmin ? 7 : 5})">Процент уважительных</th>
+                  <th onclick="window.sortTable(${isAdmin ? 8 : 6})">Процент неуважительных</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsTableBody">
+        `;
+        
+        data.forEach((student, index) => {
+          const total = parseInt(student.total_absences) || (parseInt(student.excused) + parseInt(student.unexcused));
+          const excused = parseInt(student.excused) || 0;
+          const unexcused = parseInt(student.unexcused) || 0;
+          const excusedPercent = total > 0 ? Math.round((excused / total) * 100) : 0;
+          const unexcusedPercent = total > 0 ? Math.round((unexcused / total) * 100) : 0;
+          const totalHours = (total * 2).toFixed(2);
+          const excusedHours = (excused * 2).toFixed(2);
+          const unexcusedHours = (unexcused * 2).toFixed(2);
+          
+          html += `
+            <tr class="user-row" style="animation-delay: ${index * 0.05}s">
+              <td><strong>${student.student_name || 'Неизвестный студент'}</strong></td>
+              <td>${student.group_name || '-'}</td>
+          `;
+          
+          // Добавляем данные для администратора
+          if (isAdmin) {
+            html += `
+              <td>${student.curator_name || '-'}</td>
+              <td>${student.leader_name || '-'}</td>
+            `;
+          }
+          
+          html += `
+              <td>
+                <strong>${total}</strong>
+                <div class="hours-info">(${totalHours} ч.)</div>
+              </td>
+              <td class="text-success">
+                ${excused}
+                <div class="hours-info">(${excusedHours} ч.)</div>
+              </td>
+              <td class="text-danger">
+                ${unexcused}
+                <div class="hours-info">(${unexcusedHours} ч.)</div>
+              </td>
+              <td class="percent-cell">
+                <div class="percent-display">
+                  <div class="progress-comparison">
+                    <span class="progress-label excused">У:</span>
+                    <div class="progress">
+                      <div class="progress-bar bg-success" 
+                           role="progressbar" 
+                           style="width: ${excusedPercent}%"
+                           aria-valuenow="${excusedPercent}" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="percent-number excused">${excusedPercent}%</span>
+                  </div>
+                </div>
+              </td>
+              <td class="percent-cell">
+                <div class="percent-display">
+                  <div class="progress-comparison">
+                    <span class="progress-label unexcused">Н:</span>
+                    <div class="progress">
+                      <div class="progress-bar bg-danger" 
+                           role="progressbar" 
+                           style="width: ${unexcusedPercent}%"
+                           aria-valuenow="${unexcusedPercent}" 
+                           aria-valuemin="0" 
+                           aria-valuemax="100">
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="percent-number unexcused">${unexcusedPercent}%</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+        
+        resultsContainer.innerHTML = html;
+        
+        // Анимация строк таблицы
+        setTimeout(() => {
+          const rows = document.querySelectorAll('.user-row');
+          rows.forEach(row => {
+            row.style.animation = 'slideIn 0.5s ease forwards';
+          });
+        }, 100);
+      }
+      
+      // Обработчики событий
+      searchButton.addEventListener('click', searchStudents);
+      
+      // Поиск при нажатии Enter
+      [studentNameInput, groupNameInput].forEach(input => {
+        if (input) {
+          input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              searchStudents();
+            }
+          });
+        }
+      });
+      
+      // Для селектов администратора
+      if (curatorSelect) {
+        curatorSelect.addEventListener('change', searchStudents);
+      }
+      if (leaderSelect) {
+        leaderSelect.addEventListener('change', searchStudents);
+      }
+      
+      // Загружаем данные при наличии параметров в URL
+      if (urlParams.has('student_name') || urlParams.has('group_name') || 
+          urlParams.has('curator_id') || urlParams.has('leader_id') ||
+          urlParams.has('start_date') || urlParams.has('end_date')) {
+        // Устанавливаем активную кнопку периода
+        if (urlParams.has('start_date') && urlParams.has('end_date')) {
+          const startDate = urlParams.get('start_date');
+          const endDate = urlParams.get('end_date');
+          
+          // Определяем период по датам
+          const today = new Date();
+          const start = new Date(startDate);
+          const diffTime = Math.abs(today - start);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          
+          let period = 'custom';
+          if (diffDays <= 7) period = 'week';
+          else if (diffDays <= 30) period = 'month';
+          else if (diffDays <= 120) period = 'semester';
+          else if (diffDays <= 365) period = 'year';
+          else period = 'all';
+          
+          // Активируем кнопку периода
+          periodButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-period') === period) {
+              btn.classList.add('active');
+            }
+          });
+          
+          currentPeriod = period;
+          currentStartDate = startDate;
+          currentEndDate = endDate;
+          updatePeriodInfo(startDate, endDate);
+        }
+        
+        searchStudents();
+      } else {
+        // Устанавливаем период по умолчанию
+        setDatesByPeriod('week');
+      }
+      
+      // Функция показа уведомления
+      function showAlert(message, type = 'info') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+          <div class="d-flex align-items-center">
+            <span class="icon me-2">${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+            <div>${message}</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+        
+        // Вставляем уведомление перед контейнером поиска
+        const searchContainer = document.querySelector('.search-container');
+        if (searchContainer) {
+          searchContainer.parentNode.insertBefore(alertDiv, searchContainer);
+          
+          // Автоматическое скрытие через 5 секунд
+          setTimeout(() => {
+            if (alertDiv.parentNode) {
+              const bsAlert = new bootstrap.Alert(alertDiv);
+              bsAlert.close();
+            }
+          }, 5000);
+        }
+      }
+    });
+    
+    // Глобальные функции для сортировки
+    window.sortTable = function(columnIndex) {
+      // Находим таблицу
+      const table = document.getElementById('analyticsTable');
+      if (!table) return;
+      
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      
+      // Определяем текущее направление сортировки
+      const headerCell = table.querySelector(`th:nth-child(${columnIndex + 1})`);
+      const isAscending = !headerCell.classList.contains('sorted-asc');
+      
+      // Убираем классы сортировки со всех заголовков
+      table.querySelectorAll('th').forEach(th => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+      });
+      
+      // Добавляем класс текущей сортировки
+      if (isAscending) {
+        headerCell.classList.add('sorted-asc');
+      } else {
+        headerCell.classList.add('sorted-desc');
+      }
+      
+      // Сортируем строки
+      rows.sort((a, b) => {
+        let aValue, bValue;
+        
+        if (columnIndex === 0 || columnIndex === 1 || columnIndex === 2 || columnIndex === 3) {
+          // Сортировка по тексту
+          aValue = a.cells[columnIndex].textContent.trim().toLowerCase();
+          bValue = b.cells[columnIndex].textContent.trim().toLowerCase();
+        } else if (columnIndex === 4 || columnIndex === 5 || columnIndex === 6) {
+          // Сортировка по пропускам
+          const aText = a.cells[columnIndex].textContent.trim();
+          const bText = b.cells[columnIndex].textContent.trim();
+          
+          const aMatch = aText.match(/\d+/);
+          const bMatch = bText.match(/\d+/);
+          
+          aValue = aMatch ? parseInt(aMatch[0]) : 0;
+          bValue = bMatch ? parseInt(bMatch[0]) : 0;
+        } else {
+          // Сортировка по процентам
+          const aPercentElement = a.cells[columnIndex].querySelector('.percent-number');
+          const bPercentElement = b.cells[columnIndex].querySelector('.percent-number');
+          
+          aValue = aPercentElement ? parseInt(aPercentElement.textContent) : 0;
+          bValue = bPercentElement ? parseInt(bPercentElement.textContent) : 0;
+        }
+        
+        if (isAscending) {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
+      });
+      
+      // Перестраиваем таблицу
+      rows.forEach((row, index) => {
+        setTimeout(() => {
+          row.style.transition = 'all 0.3s ease';
+          row.style.transform = 'translateY(0)';
+          tbody.appendChild(row);
+        }, index * 30);
+      });
+    };
+  </script>
+</body>
+</html>

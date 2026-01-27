@@ -1,0 +1,1186 @@
+<!-- templates/login.html -->
+{% block content %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+        background-size: 400% 400%;
+        animation: gradientShift 10s ease infinite;
+        font-family: "Segoe UI", sans-serif;
+        color: #fff;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+            linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+            radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+        background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+        body::before {
+            background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+        }
+    }
+
+    .top-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.6) 20%, 
+            rgba(255,255,255,0.8) 50%, 
+            rgba(255,255,255,0.6) 80%, 
+            transparent 100%);
+        z-index: 2;
+        animation: slideInTop 1s ease-out;
+    }
+
+    .bottom-line {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.6) 20%, 
+            rgba(255,255,255,0.8) 50%, 
+            rgba(255,255,255,0.6) 80%, 
+            transparent 100%);
+        z-index: 2;
+        animation: slideInBottom 1s ease-out 0.3s both;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes slideInTop {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+    }
+
+    @keyframes slideInBottom {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        z-index: 3;
+    }
+
+    /* Уменьшенная карточка входа */
+    .login-container {
+        width: 100%;
+        max-width: 380px;
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 20px;
+        padding: 1.8rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        color: #000;
+        animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        z-index: 4;
+        overflow: hidden;
+        margin: 10px;
+    }
+
+    .login-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, 
+            #003366 0%, 
+            #0073e6 50%, 
+            #003366 100%);
+        z-index: 1;
+    }
+
+    .login-container:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+        transition: all 0.3s ease;
+    }
+
+    /* Уменьшенная секция логотипа */
+    .logo-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(0, 51, 102, 0.15);
+        position: relative;
+    }
+
+    .logo-section::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 30%;
+        right: 30%;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            #003366 30%, 
+            #0073e6 50%, 
+            #003366 70%, 
+            transparent 100%);
+        z-index: 1;
+    }
+
+    .logo {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 18px rgba(0, 51, 102, 0.12);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        animation: float 4s ease-in-out infinite;
+    }
+
+    .logo:hover {
+        transform: rotate(5deg) scale(1.08);
+        box-shadow: 0 10px 22px rgba(0, 51, 102, 0.18);
+    }
+
+    .logo img {
+        width: 60%;
+        height: 60%;
+        object-fit: contain;
+    }
+
+    /* Уменьшенный заголовок */
+    .login-title {
+        color: #003366;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+        font-size: 1.2rem;
+        line-height: 1.3;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .login-subtitle {
+        color: #0073e6;
+        font-weight: 500;
+        font-size: 0.85rem;
+        opacity: 0.9;
+        line-height: 1.2;
+    }
+
+    .login-form {
+        margin-top: 1.2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+        position: relative;
+        animation: fadeIn 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.2s; }
+    .form-group:nth-child(2) { animation-delay: 0.3s; }
+
+    .form-label {
+        color: #003366;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        display: block;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid rgba(0, 51, 102, 0.15);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        font-size: 0.9rem;
+        color: #003366;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-control:focus {
+        border-color: #0073e6;
+        box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.15);
+        outline: none;
+        transform: translateY(-1px);
+    }
+
+    .form-control::placeholder {
+        color: rgba(0, 51, 102, 0.4);
+        font-size: 0.85rem;
+    }
+
+    .input-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: rgba(0, 51, 102, 0.6);
+        margin-top: 0.3rem;
+        font-style: italic;
+    }
+
+    /* Кнопка входа - БЕЛАЯ с черным текстом */
+    .btn-login {
+        width: 100%;
+        padding: 0.8rem;
+        background: white;
+        border: 2px solid #003366;
+        border-radius: 10px;
+        color: #003366;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.15);
+        position: relative;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease 0.4s forwards;
+        opacity: 0;
+    }
+
+    .btn-login::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 51, 102, 0.1), transparent);
+        transition: 0.5s;
+    }
+
+    .btn-login:hover {
+        background: #003366;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 51, 102, 0.25);
+    }
+
+    .btn-login:hover::before {
+        left: 100%;
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .registration-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid rgba(0, 51, 102, 0.1);
+        text-align: center;
+        animation: fadeIn 0.5s ease 0.5s forwards;
+        opacity: 0;
+    }
+
+    .registration-title {
+        color: #003366;
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    .registration-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn-register {
+        padding: 0.7rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        font-size: 0.85rem;
+        animation: fadeIn 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    .btn-register:nth-child(1) { animation-delay: 0.6s; }
+    .btn-register:nth-child(2) { animation-delay: 0.7s; }
+
+    .btn-register::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .btn-register:hover::before {
+        transform: translateX(0);
+    }
+
+    .btn-register-student {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border-color: #28a745;
+    }
+
+    .btn-register-student:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.25);
+    }
+
+    .btn-register-curator {
+        background: linear-gradient(135deg, #6f42c1, #8e44ad);
+        color: white;
+        border-color: #6f42c1;
+    }
+
+    .btn-register-curator:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(111, 66, 193, 0.25);
+    }
+
+    .login-links {
+        margin-top: 1rem;
+        text-align: center;
+        animation: fadeIn 0.5s ease 0.8s forwards;
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .login-links a {
+        color: #0073e6;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        padding: 3px 0;
+        position: relative;
+    }
+
+    .login-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 1px;
+        background: #0073e6;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .login-links a:hover {
+        color: #003366;
+    }
+
+    .login-links a:hover::after {
+        width: 100%;
+    }
+
+    .footer {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.8rem;
+        text-align: center;
+        padding: 15px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        margin-top: auto;
+        position: relative;
+        z-index: 3;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        animation: fadeIn 0.5s ease 1s forwards;
+        opacity: 0;
+    }
+
+    .alert {
+        padding: 0.8rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        animation: fadeIn 0.5s ease;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+        font-size: 0.85rem;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.04));
+        border-color: #dc3545;
+        color: #c82333;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.08), rgba(40, 167, 69, 0.04));
+        border-color: #28a745;
+        color: #218838;
+    }
+
+    .field-error {
+        color: #dc3545;
+        font-size: 0.75rem;
+        margin-top: 0.3rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* Переключатель типа входа - УМЕНЬШЕННЫЙ */
+    .login-type-toggle {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 1.2rem;
+        background: rgba(0, 51, 102, 0.05);
+        padding: 5px;
+        border-radius: 8px;
+        animation: slideIn 0.6s ease 0.2s forwards;
+        opacity: 0;
+    }
+
+    .login-type-btn {
+        flex: 1;
+        padding: 0.6rem 0.4rem;
+        text-align: center;
+        background: white;
+        border: 1px solid rgba(0, 51, 102, 0.2);
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #003366;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        min-height: 38px;
+    }
+
+    .login-type-btn.active {
+        background: linear-gradient(135deg, #003366, #0073e6);
+        color: white;
+        border-color: #003366;
+        box-shadow: 0 2px 8px rgba(0, 51, 102, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .login-type-btn:hover:not(.active) {
+        background: rgba(0, 51, 102, 0.08);
+        transform: translateY(-1px);
+        border-color: #0073e6;
+    }
+
+    .login-type-icon {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-type-text {
+        font-size: 0.8rem;
+    }
+
+    /* Стили для активных/неактивных состояний полей */
+    .login-form.login-mode .form-control#username {
+        border-color: #20c997;
+        background: rgba(32, 201, 151, 0.05);
+    }
+
+    .login-form.phone-mode .form-control#username {
+        border-color: #0073e6;
+        background: rgba(0, 115, 230, 0.05);
+    }
+
+    .login-form.login-mode .form-label[for="username"] {
+        color: #20c997;
+    }
+
+    .login-form.phone-mode .form-label[for="username"] {
+        color: #0073e6;
+    }
+
+    @media (max-width: 768px) {
+        .login-container {
+            padding: 1.5rem;
+            margin: 0.5rem;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .login-title {
+            font-size: 1.1rem;
+        }
+        
+        .login-subtitle {
+            font-size: 0.8rem;
+        }
+        
+        .login-links {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .login-type-toggle {
+            flex-direction: column;
+        }
+        
+        .login-type-btn {
+            min-height: 36px;
+        }
+        
+        .form-control {
+            padding: 0.7rem 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .login-container {
+            padding: 1.2rem;
+        }
+        
+        .btn-login, .btn-register {
+            padding: 0.7rem;
+        }
+        
+        .login-title {
+            font-size: 1rem;
+        }
+        
+        .login-type-btn {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.3rem;
+        }
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 14px;
+        padding: 1.5rem;
+        max-width: 400px;
+        width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
+        position: relative;
+        transform: translateY(30px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+        position: relative;
+    }
+
+    .modal-header::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            #003366 20%, 
+            #0073e6 50%, 
+            #003366 80%, 
+            transparent 100%);
+    }
+
+    .modal-title {
+        color: #003366;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .close-btn {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        font-weight: bold;
+    }
+
+    .close-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+</style>
+
+<!-- Верхняя декоративная линия -->
+<div class="top-line"></div>
+
+<!-- Основное содержимое -->
+<div class="main-content">
+    <div class="login-container">
+        <!-- Логотип и заголовок -->
+        <div class="logo-section">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+            </div>
+            <h1 class="login-title">РИНХ</h1>
+            <p class="login-subtitle">Финансово-экономический колледж</p>
+        </div>
+
+        <!-- Сообщения об ошибках/успехе -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Переключатель типа входа -->
+        <div class="login-type-toggle">
+            <div class="login-type-btn active" onclick="setLoginType('login')" id="loginModeBtn">
+                <span class="login-type-icon">👤</span>
+                <span class="login-type-text">Вход по логину</span>
+            </div>
+            <div class="login-type-btn" onclick="setLoginType('phone')" id="phoneModeBtn">
+                <span class="login-type-icon">📱</span>
+                <span class="login-type-text">Вход по телефону</span>
+            </div>
+        </div>
+
+        <!-- Форма входа -->
+        <form action="{{ url_for('auth.login') }}" method="POST" class="login-form login-mode" id="loginForm">
+            <div class="form-group">
+                <label for="username" class="form-label" id="usernameLabel">Логин (ФИО)</label>
+                <input type="text" 
+                       class="form-control" 
+                       name="username" 
+                       id="username" 
+                       placeholder="Введите ваше ФИО" 
+                       required 
+                       autofocus>
+                <span class="input-hint" id="usernameHint">Например: Иванов Иван Иванович или admin</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" 
+                       class="form-control" 
+                       name="password" 
+                       id="password" 
+                       placeholder="Введите ваш пароль" 
+                       required>
+                <span class="input-hint">Пароль, указанный при регистрации</span>
+            </div>
+            
+            <button type="submit" class="btn-login">
+                🔐 Войти в систему
+            </button>
+        </form>
+
+        <!-- Раздел регистрации -->
+        <div class="registration-section">
+            <h3 class="registration-title">Нет аккаунта? Зарегистрируйтесь</h3>
+            <div class="registration-buttons">
+                <a href="{{ url_for('auth.register_student') }}" class="btn-register btn-register-student">
+                    🎓 Регистрация старосты
+                </a>
+                <a href="{{ url_for('auth.register_curator') }}" class="btn-register btn-register-curator">
+                    👨‍🏫 Регистрация куратора
+                </a>
+            </div>
+        </div>
+
+        <!-- Дополнительные ссылки -->
+        <div class="login-links">
+            <a href="#" onclick="showHelpModal()">📋 Помощь по входу</a>
+            <a href="#" onclick="showPasswordResetModal()">🔑 Забыли пароль?</a>
+        </div>
+    </div>
+</div>
+
+<!-- Нижняя декоративная линия -->
+<div class="bottom-line"></div>
+
+<!-- Футер -->
+<div class="footer">
+    <div class="footer-text">
+        © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+</div>
+
+<!-- Модальное окно помощи -->
+<div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">📋 Помощь по входу</h2>
+            <button class="close-btn" onclick="closeHelpModal()">×</button>
+        </div>
+        <div style="padding: 1.2rem; color: #003366;">
+            <div style="margin-bottom: 1.2rem;">
+                <h4 style="color: #003366; margin-bottom: 0.6rem; font-size: 1rem;">Доступные способы входа:</h4>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px; background: rgba(32, 201, 151, 0.05); padding: 10px; border-radius: 8px; border-left: 4px solid #20c997;">
+                        <div style="font-size: 1rem; color: #20c997;">👤</div>
+                        <div>
+                            <strong style="color: #20c997;">Вход по логину:</strong>
+                            <p style="margin: 4px 0 0 0; color: #666; font-size: 0.85rem;">
+                                Используйте ваше <strong>ФИО</strong> или специальный логин<br>
+                                <span style="font-size: 0.8rem; color: #888;">Примеры: "Иванов Иван Иванович", "admin"</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 8px; background: rgba(0, 115, 230, 0.05); padding: 10px; border-radius: 8px; border-left: 4px solid #0073e6;">
+                        <div style="font-size: 1rem; color: #0073e6;">📱</div>
+                        <div>
+                            <strong style="color: #0073e6;">Вход по телефону:</strong>
+                            <p style="margin: 4px 0 0 0; color: #666; font-size: 0.85rem;">
+                                Используйте номер телефона, указанный при регистрации<br>
+                                <span style="font-size: 0.8rem; color: #888;">Любой формат: +79991234567, 89991234567, 9991234567</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background: rgba(0, 51, 102, 0.05); padding: 0.8rem; border-radius: 8px; margin-top: 0.8rem;">
+                <p style="margin: 0; color: #666; font-size: 0.8rem; text-align: center;">
+                    💡 <strong>Совет:</strong> Для администраторов используйте логин <strong>"admin"</strong><br>
+                    💡 Для кураторов и старост используйте ваше <strong>полное ФИО</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно восстановления пароля -->
+<div class="modal-overlay" id="passwordResetModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">🔑 Восстановление пароля</h2>
+            <button class="close-btn" onclick="closePasswordResetModal()">×</button>
+        </div>
+        <div style="padding: 1.2rem;">
+            <p style="color: #003366; margin-bottom: 1rem; font-size: 0.9rem;">
+                Для восстановления пароля обратитесь к администратору системы или куратору вашей группы.
+            </p>
+            <div style="background: rgba(0, 51, 102, 0.05); padding: 0.8rem; border-radius: 8px; font-size: 0.85rem;">
+                <p style="margin: 0; color: #666;">
+                    📞 Контакты администратора: <strong>+7 (XXX) XXX-XX-XX</strong><br>
+                    📧 Email: <strong>admin@rinx-college.ru</strong>
+                </p>
+            </div>
+            <div style="margin-top: 1.2rem; padding: 0.8rem; background: rgba(40, 167, 69, 0.05); border-radius: 8px; border-left: 4px solid #28a745;">
+                <p style="margin: 0; color: #218838; font-size: 0.8rem;">
+                    💡 <strong>Совет:</strong> Для безопасности не используйте простые пароли.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let loginType = 'login';
+
+    // Анимация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация контейнера
+        const loginContainer = document.querySelector('.login-container');
+        loginContainer.style.opacity = '0';
+        loginContainer.style.transform = 'translateY(20px) scale(0.96)';
+        
+        setTimeout(() => {
+            loginContainer.style.transition = 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            loginContainer.style.opacity = '1';
+            loginContainer.style.transform = 'translateY(0) scale(1)';
+        }, 300);
+
+        // Анимация элементов формы
+        const formGroups = document.querySelectorAll('.form-group');
+        formGroups.forEach((group, index) => {
+            setTimeout(() => {
+                group.style.animation = 'fadeIn 0.5s ease forwards';
+            }, 400 + (index * 150));
+        });
+
+        // Автофокус на поле ввода
+        setTimeout(() => {
+            const usernameField = document.getElementById('username');
+            if (usernameField) {
+                usernameField.focus();
+            }
+        }, 700);
+
+        // Плавное появление остальных элементов
+        setTimeout(() => {
+            const btnLogin = document.querySelector('.btn-login');
+            if (btnLogin) {
+                btnLogin.style.animation = 'fadeIn 0.5s ease forwards';
+            }
+        }, 800);
+    });
+
+    // Установка типа входа
+    function setLoginType(type) {
+        loginType = type;
+        const usernameLabel = document.getElementById('usernameLabel');
+        const usernameInput = document.getElementById('username');
+        const usernameHint = document.getElementById('usernameHint');
+        const loginForm = document.getElementById('loginForm');
+        
+        // Обновляем активную кнопку
+        document.querySelectorAll('.login-type-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        if (type === 'login') {
+            document.getElementById('loginModeBtn').classList.add('active');
+            usernameLabel.textContent = 'Логин (ФИО)';
+            usernameInput.placeholder = 'Введите ваше ФИО';
+            usernameHint.innerHTML = 'Например: <strong>Иванов Иван Иванович</strong> или <strong>admin</strong>';
+            loginForm.classList.remove('phone-mode');
+            loginForm.classList.add('login-mode');
+            usernameInput.type = 'text';
+        } else {
+            document.getElementById('phoneModeBtn').classList.add('active');
+            usernameLabel.textContent = 'Телефон';
+            usernameInput.placeholder = 'Введите номер телефона';
+            usernameHint.innerHTML = 'Например: <strong>+7 (999) 123-45-67</strong> или <strong>89991234567</strong>';
+            loginForm.classList.remove('login-mode');
+            loginForm.classList.add('phone-mode');
+            usernameInput.type = 'tel';
+        }
+        
+        // Очищаем поле и фокус
+        usernameInput.value = '';
+        usernameInput.focus();
+        
+        // Анимация изменения
+        usernameInput.style.animation = 'pulse 0.3s ease';
+        setTimeout(() => {
+            usernameInput.style.animation = '';
+        }, 300);
+    }
+
+    // Валидация формы
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            
+            let isValid = true;
+            
+            clearFieldErrors();
+            
+            if (!username.value.trim()) {
+                showFieldError(username, 'Поле не может быть пустым');
+                isValid = false;
+            } else if (loginType === 'phone') {
+                const phoneValue = username.value.replace(/\D/g, '');
+                if (phoneValue.length < 10) {
+                    showFieldError(username, 'Введите корректный номер телефона (минимум 10 цифр)');
+                    isValid = false;
+                }
+            } else {
+                const loginValue = username.value.trim();
+                if (loginValue.length < 2) {
+                    showFieldError(username, 'Введите не менее 2 символов');
+                    isValid = false;
+                }
+            }
+            
+            if (!password.value.trim()) {
+                showFieldError(password, 'Введите пароль');
+                isValid = false;
+            } else if (password.value.length < 3) {
+                showFieldError(password, 'Пароль слишком короткий');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                const container = document.querySelector('.login-container');
+                container.style.animation = 'shake 0.5s ease';
+                setTimeout(() => {
+                    container.style.animation = '';
+                }, 500);
+            } else {
+                const btn = document.querySelector('.btn-login');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ Вход...';
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'wait';
+            }
+        });
+    }
+
+    function showFieldError(field, message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.textContent = message;
+        
+        field.style.borderColor = '#dc3545';
+        field.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.1)';
+        
+        field.parentNode.insertBefore(errorDiv, field.nextSibling);
+        
+        field.addEventListener('input', function clearError() {
+            field.style.borderColor = '';
+            field.style.boxShadow = '';
+            if (errorDiv.parentNode) {
+                errorDiv.remove();
+            }
+        }, { once: true });
+    }
+
+    function clearFieldErrors() {
+        document.querySelectorAll('.field-error').forEach(error => error.remove());
+        document.querySelectorAll('.form-control').forEach(field => {
+            field.style.borderColor = '';
+            field.style.boxShadow = '';
+        });
+    }
+
+    // Автоформатирование телефона
+    document.getElementById('username')?.addEventListener('input', function(e) {
+        if (loginType === 'phone') {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length > 0) {
+                let formatted = '';
+                
+                if (value.startsWith('7') || value.startsWith('8')) {
+                    formatted = '+7';
+                    if (value.length > 1) formatted += ' (' + value.substring(1, 4);
+                    if (value.length >= 5) formatted += ') ' + value.substring(4, 7);
+                    if (value.length >= 8) formatted += '-' + value.substring(7, 9);
+                    if (value.length >= 10) formatted += '-' + value.substring(9, 11);
+                } else {
+                    if (value.length <= 3) {
+                        formatted = value;
+                    } else if (value.length <= 6) {
+                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3);
+                    } else if (value.length <= 8) {
+                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6);
+                    } else {
+                        formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6, 8) + '-' + value.substring(8, 10);
+                    }
+                }
+                
+                this.value = formatted.substring(0, 20);
+            }
+        }
+    });
+
+    // Модальные окна
+    function showHelpModal() {
+        const modal = document.getElementById('helpModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function closeHelpModal() {
+        const modal = document.getElementById('helpModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+
+    function showPasswordResetModal() {
+        const modal = document.getElementById('passwordResetModal');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function closePasswordResetModal() {
+        const modal = document.getElementById('passwordResetModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+
+    // Закрытие модальных окон
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+                setTimeout(() => {
+                    this.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 300);
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modals = document.querySelectorAll('.modal-overlay');
+            modals.forEach(modal => {
+                if (modal.style.display === 'flex') {
+                    modal.classList.remove('active');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }, 300);
+                }
+            });
+        }
+    });
+
+    // Обработка нажатия Enter
+    document.getElementById('username')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('password').focus();
+        }
+    });
+
+    document.getElementById('password')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.querySelector('.btn-login').click();
+        }
+    });
+
+    // Сохраняем тип входа
+    window.addEventListener('beforeunload', function() {
+        localStorage.setItem('loginType', loginType);
+    });
+
+    // Восстанавливаем тип входа
+    window.addEventListener('load', function() {
+        const savedType = localStorage.getItem('loginType');
+        if (savedType && (savedType === 'login' || savedType === 'phone')) {
+            setLoginType(savedType);
+        }
+    });
+</script>
+{% endblock %}

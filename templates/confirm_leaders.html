@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтверждение старост | Финансово-экономический колледж (РИНХ)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            font-family: "Segoe UI", sans-serif;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Линии на заднем фоне */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+                linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%);
+            background-size: 50px 50px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Верхняя декоративная линия */
+        .top-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+        }
+
+        /* Нижняя декоративная линия */
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(8px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        header img:hover {
+            transform: scale(1.05);
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            position: relative;
+            z-index: 3;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .container-custom {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            margin-top: 2rem;
+            width: 90%;
+            max-width: 1000px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #000;
+            text-align: left;
+        }
+
+        /* Декоративный акцент на панели */
+        .container-custom::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                #003366 0%, 
+                #0073e6 50%, 
+                #003366 100%);
+        }
+
+        .container-custom h3 {
+            color: #003366;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .container-custom h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                #003366 0%, 
+                #0073e6 100%);
+        }
+
+        .btn-nav {
+            margin: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #003366;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-nav:hover {
+            background-color: #0073e6;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 115, 230, 0.4);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .table-striped {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-striped thead {
+            background: linear-gradient(90deg, #003366, #0073e6);
+        }
+
+        .table-dark th {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table-striped tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: rgba(0, 115, 230, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .table-striped td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        .btn-success, .btn-secondary {
+            border: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 5px;
+            font-weight: 500;
+        }
+
+        .btn-success:hover, .btn-secondary:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success.btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+            font-style: italic;
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+            position: relative;
+            z-index: 3;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .role-badge {
+            background: linear-gradient(90deg, #003366, #0073e6);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0073e6, #004c99);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .group-badge {
+            background: #003366;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-message h4 {
+            color: #003366;
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .empty-message h4::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #003366 20%, 
+                #0073e6 50%, 
+                #003366 80%, 
+                transparent 100%);
+        }
+
+        .empty-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 1rem;
+                width: 95%;
+            }
+            
+            .table-striped th,
+            .table-striped td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .action-cell {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-success, .btn-secondary {
+                width: 100%;
+                margin: 2px 0;
+            }
+            
+            .empty-message h4::after {
+                left: 5%;
+                right: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя декоративная линия -->
+    <div class="top-line"></div>
+
+    <header>
+        <div class="d-flex align-items-center gap-2">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+            <h5 class="m-0">Финансово-экономический колледж (РИНХ)</h5>
+        </div>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-light">Выйти</a>
+    </header>
+
+    <main>
+        <div class="container-custom">
+            <h3>Старосты, ожидающие подтверждения</h3>
+            
+            {% if leaders %}
+            <div class="table-container">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>ФИО</th>
+                            <th>Группа</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in leaders %}
+                        <tr>
+                            <td><strong>{{ loop.index }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="student-avatar">
+                                        {{ l.full_name.split(' ')[0][0] }}{{ l.full_name.split(' ')[1][0] if l.full_name.split(' ')|length > 1 else '' }}
+                                    </div>
+                                    <span>{{ l.full_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="group-badge">
+                                    {{ l.group.name if l.group else '-' }}
+                                </span>
+                            </td>
+                            <td class="action-cell">
+                                <a href="{{ url_for('dashboard.confirm_leader', user_id=l.id) }}" class="btn btn-success btn-sm">✅ Подтвердить</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-message">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+                <h4>Нет неподтверждённых старост</h4>
+                <p class="text-muted mt-2">Все заявки на роль старосты уже обработаны или заявок не поступало.</p>
+            </div>
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('dashboard.confirm_leaders') }}" class="btn btn-secondary">⬅ Назад</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Нижняя декоративная линия -->
+    <div class="bottom-line"></div>
+
+    <div class="footer">
+        © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

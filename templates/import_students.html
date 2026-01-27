@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Импорт студентов | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Линии на заднем фоне - КЛЕТОЧКИ БЕЗ ТЕКСТА РИНХ */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%);
+      background-size: 50px 50px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* УБИРАЕМ ТЕКСТ РИНХ НА ЗАДНЕМ ФОНЕ */
+    body::after {
+      content: "";
+      display: none;
+    }
+
+    /* УБИРАЕМ ТЕКСТ "ФИНАНСОВО-ЭКОНОМИЧЕСКИЙ КОЛЛЕДЖ" */
+    .background-text {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body::after {
+        display: none;
+      }
+      .background-text {
+        display: none;
+      }
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .import-container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      color: #000;
+      animation: fadeIn 0.8s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      position: relative;
+      z-index: 4;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .form-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .form-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 51, 102, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        #003366 0%, 
+        #0073e6 50%, 
+        #003366 100%);
+      z-index: 1;
+    }
+
+    .form-label {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid rgba(0, 51, 102, 0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #0073e6;
+      box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+      outline: none;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(0, 51, 102, 0.1);
+    }
+
+    .btn-back {
+      background: rgba(0, 51, 102, 0.1);
+      border: 2px solid #003366;
+      color: #003366;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-back:hover {
+      background: #003366;
+      color: white;
+      transform: translateX(-5px);
+      box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+      background: linear-gradient(135deg, #20c997, #28a745);
+    }
+
+    .btn-submit:active {
+      transform: translateY(-1px);
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-danger {
+      background: rgba(244, 67, 54, 0.1);
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .alert-warning {
+      background: rgba(255, 152, 0, 0.1);
+      color: #ef6c00;
+      border-left: 4px solid #ff9800;
+    }
+
+    .alert-info {
+      background: rgba(33, 150, 243, 0.1);
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .required::after {
+      content: " *";
+      color: #f44336;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+    }
+
+    /* Стили для иконок в форме */
+    .form-icon {
+      position: absolute;
+      right: 15px;
+      top: 40px;
+      color: rgba(0, 51, 102, 0.5);
+      font-size: 1.2rem;
+      z-index: 2;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .info-text {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid rgba(0, 51, 102, 0.2);
+    }
+
+    .instructions {
+      background: rgba(0, 51, 102, 0.08);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid #0073e6;
+    }
+
+    .instructions h5 {
+      color: #003366;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .instructions ul {
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+    }
+
+    .instructions li {
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+
+    .file-info {
+      background: rgba(0, 51, 102, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      border: 2px dashed rgba(0, 51, 102, 0.2);
+    }
+
+    .file-info small {
+      color: #666;
+      display: block;
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    code {
+      background: rgba(0, 51, 102, 0.15);
+      color: #0073e6;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      font-weight: 500;
+      font-family: 'Courier New', monospace;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .import-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .btn-back, .btn-submit {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .form-card {
+        padding: 1.5rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .button-group a, 
+      .button-group button {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+    
+    /* Анимация загрузки файла */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .file-upload-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    /* Стили для визуального отображения выбранного файла */
+    .file-selected {
+      background-color: rgba(76, 175, 80, 0.1) !important;
+      border-color: #4caf50 !important;
+    }
+    
+    .file-selected-label {
+      color: #2e7d32 !important;
+      font-weight: bold !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+      <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+        <span class="icon"></span>
+        Выйти
+      </a>
+    </div>
+  </header>
+
+  <!-- Основное содержимое -->
+  <div class="main-content">
+    <div class="import-container">
+      <div class="form-header">
+        <h1 class="form-title">
+          📊 Импорт студентов из Excel
+        </h1>
+        <p class="form-subtitle">
+          Загрузите файл Excel с данными студентов для массового добавления
+        </p>
+      </div>
+
+      <!-- Сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <span class="icon me-2">
+                  {% if category == 'success' %}✅
+                  {% elif category == 'danger' %}❌
+                  {% elif category == 'warning' %}⚠️
+                  {% else %}ℹ️
+                  {% endif %}
+                </span>
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Форма -->
+      <div class="form-card">
+        <form method="POST" id="importForm" enctype="multipart/form-data">
+          <div class="instructions">
+            <h5>📋 Инструкция по импорту:</h5>
+            <ul>
+              <li>Подготовьте файл Excel (.xlsx) с данными студентов</li>
+              <li>Файл должен содержать колонки: <strong>ФИО</strong> и <strong>Группа</strong></li>
+              <li>Первая строка файла должна содержать заголовки столбцов</li>
+              <li>Данные студентов будут автоматически добавлены в систему</li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <label for="file" class="form-label required" id="fileLabel">Выберите файл Excel для импорта:</label>
+            <div class="position-relative">
+              <input 
+                type="file" 
+                class="form-control" 
+                id="file" 
+                name="file" 
+                accept=".xlsx" 
+                required
+              >
+              <span class="form-icon"></span>
+            </div>
+            
+            <div class="file-info">
+              <strong>📄 Требования к файлу:</strong><br>
+              <small>• Формат: <code>.xlsx</code> (Excel 2007 и выше)</small><br>
+              <small>• Структура: Первая строка - заголовки, далее данные студентов</small><br>
+              <small>• Обязательные колонки: <code>ФИО</code>, <code>Группа</code></small><br>
+              <small>• Пример данных: <code>ФИО | Иванов Иван Иванович</code>, <code>Группа | Э-21</code></small><br>
+              <small>• Максимальный размер файла: 10 MB</small>
+            </div>
+            
+            <div class="info-text">
+              Поддерживается только формат .xlsx. Для .xls файлов используйте сохранение как .xlsx в Excel
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <!-- ИЗМЕНЕНО: Теперь кнопка ведет на страницу админ-панели -->
+            <a href="{{ url_for('dashboard.admin_dashboard') }}" class="btn-back">
+              <span class="icon">←</span>
+              Назад
+            </a>
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <span class="icon">📤</span>
+              Начать импорт
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Дополнительная информация -->
+      <div class="mt-4 text-center">
+        <small class="text-muted">
+          <strong>Примечание:</strong> 
+          После успешного импорта студенты будут добавлены в систему и доступны для учёта пропусков.
+          Проверьте данные перед импортом во избежание дублирования записей.
+        </small>
+      </div>
+      
+      <!-- Сообщение об успехе/ошибке -->
+      {% if message %}
+      <div class="alert alert-info mt-4">
+        <div class="d-flex align-items-center">
+          <span class="icon me-2">ℹ️</span>
+          <div>
+            <strong>Статус импорта:</strong><br>
+            {{ message }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      {% if error %}
+      <div class="alert alert-danger mt-4">
+        <div class="d-flex align-items-center">
+          <span class="icon me-2">❌</span>
+          <div>
+            <strong>Ошибка:</strong><br>
+            {{ error }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <!-- Футер с копирайтом -->
+  <div class="footer">
+    <div class="footer-text">
+      © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+    <div class="mt-2" style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Валидация формы
+    document.getElementById('importForm').addEventListener('submit', function(e) {
+      const fileInput = document.getElementById('file');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (!fileInput.value) {
+        e.preventDefault();
+        showAlert('Пожалуйста, выберите файл для импорта', 'warning');
+        fileInput.focus();
+        return false;
+      }
+      
+      // Проверка расширения файла
+      const fileName = fileInput.value;
+      if (!fileName.toLowerCase().endsWith('.xlsx')) {
+        e.preventDefault();
+        showAlert('Пожалуйста, выберите файл с расширением .xlsx', 'warning');
+        return false;
+      }
+      
+      // Показываем индикатор загрузки
+      submitBtn.innerHTML = '<span class="icon">⏳</span> Импорт данных...';
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+    });
+    
+    // Функция показа уведомления
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+          <span class="icon me-2">${type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+          <div>${message}</div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      // Вставляем уведомление перед формой
+      const formCard = document.querySelector('.form-card');
+      formCard.parentNode.insertBefore(alertDiv, formCard);
+      
+      // Автоматическое скрытие через 5 секунд
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          const bsAlert = new bootstrap.Alert(alertDiv);
+          bsAlert.close();
+        }
+      }, 5000);
+    }
+    
+    // Обработка выбора файла
+    document.getElementById('file').addEventListener('change', function(e) {
+      const fileInput = e.target;
+      const fileLabel = document.getElementById('fileLabel');
+      const fileInfo = document.querySelector('.file-info');
+      
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const fileName = file.name;
+        const fileSize = (file.size / 1024 / 1024).toFixed(2); // Размер в MB
+        
+        // Добавляем класс для визуального выделения
+        fileInput.classList.add('file-selected');
+        fileLabel.classList.add('file-selected-label');
+        
+        // Обновляем информацию о файле
+        fileInfo.innerHTML = `
+          <strong>📁 Выбран файл:</strong><br>
+          <small>• Имя: <code>${fileName}</code></small><br>
+          <small>• Размер: ${fileSize} MB</small><br>
+          <small>• Тип: ${file.type || 'Excel файл'}</small><br>
+          <small>• Дата изменения: ${new Date(file.lastModified).toLocaleDateString('ru-RU')}</small>
+        `;
+        
+        // Анимация при выборе файла
+        fileInfo.style.animation = 'pulse 1s ease';
+        setTimeout(() => {
+          fileInfo.style.animation = '';
+        }, 1000);
+        
+        // Проверка размера файла
+        if (file.size > 10 * 1024 * 1024) { // 10 MB
+          showAlert('Размер файла превышает 10 MB. Пожалуйста, выберите файл меньшего размера.', 'warning');
+          fileInput.value = '';
+          fileInput.classList.remove('file-selected');
+          fileLabel.classList.remove('file-selected-label');
+          fileInfo.innerHTML = `
+            <strong>📄 Требования к файлу:</strong><br>
+            <small>• Формат: <code>.xlsx</code> (Excel 2007 и выше)</small><br>
+            <small>• Структура: Первая строка - заголовки, далее данные студентов</small><br>
+            <small>• Обязательные колонки: <code>ФИО</code>, <code>Группа</code></small><br>
+            <small>• Пример данных: <code>ФИО | Иванов Иван Иванович</code>, <code>Группа | Э-21</code></small><br>
+            <small>• Максимальный размер файла: 10 MB</small>
+          `;
+        }
+      } else {
+        fileInput.classList.remove('file-selected');
+        fileLabel.classList.remove('file-selected-label');
+      }
+    });
+    
+    // Анимация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      const importContainer = document.querySelector('.import-container');
+      importContainer.style.opacity = '0';
+      importContainer.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        importContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        importContainer.style.opacity = '1';
+        importContainer.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+      
+      // Анимация элементов формы
+      const formGroups = document.querySelectorAll('.form-group, .instructions');
+      formGroups.forEach((group, index) => {
+        group.style.opacity = '0';
+        group.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+          group.style.transition = 'all 0.5s ease';
+          group.style.opacity = '1';
+          group.style.transform = 'translateX(0)';
+        }, 300 + (index * 100));
+      });
+      
+      // Анимация кнопок
+      const buttons = document.querySelectorAll('.btn-back, .btn-submit');
+      buttons.forEach(btn => {
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          btn.style.transition = 'all 0.5s ease';
+          btn.style.opacity = '1';
+          btn.style.transform = 'translateY(0)';
+        }, 800);
+      });
+      
+      // Автоматическая анимация для элемента file-info
+      const fileInfo = document.querySelector('.file-info');
+      if (fileInfo) {
+        fileInfo.classList.add('file-upload-animation');
+        setTimeout(() => {
+          fileInfo.classList.remove('file-upload-animation');
+        }, 4000);
+      }
+    });
+    
+    // Подсветка обязательных полей
+    document.querySelectorAll('[required]').forEach(field => {
+      field.addEventListener('blur', function() {
+        if (!this.value) {
+          this.style.borderColor = '#f44336';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(244, 67, 54, 0.25)';
+        } else {
+          this.style.borderColor = '#4caf50';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(76, 175, 80, 0.25)';
+        }
+      });
+      
+      field.addEventListener('focus', function() {
+        this.style.borderColor = '#0073e6';
+        this.style.boxShadow = '0 0 0 0.25rem rgba(0, 115, 230, 0.25)';
+      });
+      
+      // Для файлового поля
+      field.addEventListener('change', function() {
+        if (this.value) {
+          this.style.borderColor = '#4caf50';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(76, 175, 80, 0.25)';
+        }
+      });
+    });
+    
+    // Перетаскивание файла
+    const fileInput = document.getElementById('file');
+    const formCard = document.querySelector('.form-card');
+    
+    formCard.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.borderColor = '#0073e6';
+      this.style.boxShadow = '0 0 20px rgba(0, 115, 230, 0.3)';
+      this.style.transform = 'scale(1.02)';
+    });
+    
+    formCard.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      this.style.borderColor = 'rgba(0, 51, 102, 0.1)';
+      this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+      this.style.transform = 'scale(1)';
+    });
+    
+    formCard.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.borderColor = 'rgba(0, 51, 102, 0.1)';
+      this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+      this.style.transform = 'scale(1)';
+      
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        
+        // Имитируем событие change
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+        
+        // Анимация успешного перетаскивания
+        this.style.borderColor = '#4caf50';
+        this.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.3)';
+        setTimeout(() => {
+          this.style.borderColor = 'rgba(0, 51, 102, 0.1)';
+          this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

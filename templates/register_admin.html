@@ -1,0 +1,766 @@
+<!-- templates/register_admin.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация администратора | Финансово-экономический колледж РИНХ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            font-family: "Segoe UI", sans-serif;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+                linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            body::before {
+                background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+            }
+        }
+
+        .top-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+            animation: slideInTop 1s ease-out;
+        }
+
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+            animation: slideInBottom 1s ease-out 0.3s both;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes slideInTop {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes slideInBottom {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 380px; /* Уменьшено */
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            padding: 1.8rem; /* Уменьшено */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            color: #000;
+            animation: fadeIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 4;
+            overflow: hidden;
+        }
+
+        .register-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                #dc3545 0%, 
+                #fd7e14 50%, 
+                #dc3545 100%); /* Красная тема для админа */
+            z-index: 1;
+        }
+
+        .register-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+            transition: all 0.3s ease;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 1.3rem; /* Уменьшено */
+            padding-bottom: 1rem; /* Уменьшено */
+            border-bottom: 2px solid rgba(220, 53, 69, 0.15);
+            position: relative;
+        }
+
+        .logo-section::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 30%;
+            right: 30%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #dc3545 30%, 
+                #fd7e14 50%, 
+                #dc3545 70%, 
+                transparent 100%);
+            z-index: 1;
+        }
+
+        .logo {
+            width: 70px; /* Уменьшено */
+            height: 70px; /* Уменьшено */
+            margin: 0 auto 0.8rem; /* Уменьшено */
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.15);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .logo:hover {
+            transform: rotate(5deg) scale(1.08);
+            box-shadow: 0 12px 25px rgba(220, 53, 69, 0.2);
+        }
+
+        .logo img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+        }
+
+        .register-title {
+            color: #dc3545; /* Красный для админа */
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            font-size: 1.2rem; /* Уменьшено */
+            line-height: 1.3;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .register-subtitle {
+            color: #fd7e14; /* Оранжевый для админа */
+            font-weight: 500;
+            font-size: 0.85rem; /* Уменьшено */
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        .register-form {
+            margin-top: 1.2rem; /* Уменьшено */
+        }
+
+        .form-group {
+            margin-bottom: 1rem; /* Уменьшено */
+            position: relative;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        .form-label {
+            color: #dc3545; /* Красный для админа */
+            font-weight: 600;
+            margin-bottom: 0.3rem; /* Уменьшено */
+            display: block;
+            font-size: 0.85rem; /* Уменьшено */
+            transition: color 0.3s ease;
+        }
+
+        .required-label::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.7rem 1rem; /* Уменьшено */
+            border: 2px solid rgba(220, 53, 69, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem; /* Уменьшено */
+            color: #003366;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .form-control:focus {
+            border-color: #fd7e14;
+            box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.15);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: rgba(220, 53, 69, 0.4);
+            font-size: 0.85rem; /* Уменьшено */
+        }
+
+        .input-hint {
+            display: block;
+            font-size: 0.75rem; /* Уменьшено */
+            color: rgba(220, 53, 69, 0.7);
+            margin-top: 0.2rem; /* Уменьшено */
+            font-style: italic;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 0.8rem; /* Уменьшено */
+            background: white;
+            border: 2px solid #dc3545;
+            border-radius: 10px;
+            color: #dc3545;
+            font-weight: 700;
+            font-size: 0.95rem; /* Уменьшено */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.8rem; /* Уменьшено */
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease 0.8s forwards;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-register::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-register:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(220, 53, 69, 0.25);
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .login-section {
+            margin-top: 1.2rem; /* Уменьшено */
+            padding-top: 1rem; /* Уменьшено */
+            border-top: 2px solid rgba(220, 53, 69, 0.1);
+            text-align: center;
+            animation: fadeIn 0.5s ease 0.9s forwards;
+            opacity: 0;
+        }
+
+        .login-link {
+            color: #0073e6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem; /* Уменьшено */
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .login-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem; /* Уменьшено */
+            text-align: center;
+            padding: 12px; /* Уменьшено */
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+            position: relative;
+            z-index: 3;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s ease 1s forwards;
+            opacity: 0;
+        }
+
+        .alert {
+            padding: 0.8rem; /* Уменьшено */
+            border-radius: 10px;
+            margin-bottom: 1rem; /* Уменьшено */
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            font-size: 0.85rem; /* Уменьшено */
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.08), rgba(220, 53, 69, 0.04));
+            border-color: #dc3545;
+            color: #c82333;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.08), rgba(40, 167, 69, 0.04));
+            border-color: #28a745;
+            color: #218838;
+        }
+
+        .field-error {
+            color: #dc3545;
+            font-size: 0.75rem; /* Уменьшено */
+            margin-top: 0.2rem; /* Уменьшено */
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                padding: 1.5rem; /* Уменьшено */
+                margin: 1rem;
+                max-width: 90%;
+            }
+            
+            .logo {
+                width: 60px; /* Уменьшено */
+                height: 60px; /* Уменьшено */
+            }
+            
+            .register-title {
+                font-size: 1.1rem; /* Уменьшено */
+            }
+            
+            .register-subtitle {
+                font-size: 0.8rem; /* Уменьшено */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 1.2rem; /* Уменьшено */
+            }
+            
+            .form-control {
+                padding: 0.6rem 0.9rem; /* Уменьшено */
+            }
+            
+            .btn-register {
+                padding: 0.7rem; /* Уменьшено */
+            }
+            
+            .register-title {
+                font-size: 1rem; /* Уменьшено */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя декоративная линия -->
+    <div class="top-line"></div>
+
+    <!-- Основное содержимое -->
+    <div class="main-content">
+        <div class="register-container">
+            <!-- Логотип и заголовок -->
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+                </div>
+                <h1 class="register-title">👑 Регистрация администратора</h1>
+                <p class="register-subtitle">Финансово-экономический колледж (РИНХ)</p>
+            </div>
+
+            <!-- Сообщения об ошибках/успехе -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Форма регистрации -->
+            <form method="POST" class="register-form" id="registerForm">
+                <!-- ФИО -->
+                <div class="form-group">
+                    <label for="full_name" class="form-label required-label">ФИО</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="full_name" 
+                           name="full_name" 
+                           placeholder="Иванов Иван Иванович" 
+                           required
+                           value="{{ form.full_name.data if form and form.full_name.data }}">
+                    <span class="input-hint">Введите ваше полное ФИО</span>
+                </div>
+
+                <!-- Телефон -->
+                <div class="form-group">
+                    <label for="phone" class="form-label required-label">Телефон</label>
+                    <input type="tel" 
+                           class="form-control" 
+                           id="phone" 
+                           name="phone" 
+                           placeholder="+7 (999) 123-45-67" 
+                           required
+                           value="{{ form.phone.data if form and form.phone.data }}">
+                    <span class="input-hint">Будет использоваться для входа</span>
+                </div>
+
+                <!-- Пароль -->
+                <div class="form-group">
+                    <label for="password" class="form-label required-label">Пароль</label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="password" 
+                           name="password" 
+                           placeholder="Введите пароль" 
+                           required>
+                    <span class="input-hint">Минимум 6 символов</span>
+                </div>
+
+                <!-- Подтверждение пароля -->
+                <div class="form-group">
+                    <label for="confirm_password" class="form-label required-label">Подтверждение пароля</label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           placeholder="Повторите пароль" 
+                           required>
+                    <span class="input-hint">Введите пароль еще раз</span>
+                </div>
+
+                <button type="submit" class="btn-register" id="submitBtn">
+                    <span class="btn-icon">👑</span>
+                    Создать администратора
+                </button>
+            </form>
+
+            <!-- Ссылка на вход -->
+            <div class="login-section">
+                <p style="color: #666; font-size: 0.85rem; margin: 0;">
+                    Уже есть аккаунт? 
+                    <a href="{{ url_for('auth.login') }}" class="login-link">
+                        <span>🔐</span>
+                        Войти в систему
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя декоративная линия -->
+    <div class="bottom-line"></div>
+
+    <!-- Футер -->
+    <div class="footer">
+        <div class="footer-text">
+            © 2025г. Финансово-экономический колледж (РИНХ)
+        </div>
+    </div>
+
+    <script>
+        // Анимация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Анимация контейнера
+            const registerContainer = document.querySelector('.register-container');
+            registerContainer.style.opacity = '0';
+            registerContainer.style.transform = 'translateY(25px) scale(0.96)';
+            
+            setTimeout(() => {
+                registerContainer.style.transition = 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                registerContainer.style.opacity = '1';
+                registerContainer.style.transform = 'translateY(0) scale(1)';
+            }, 300);
+
+            // Анимация элементов формы
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                setTimeout(() => {
+                    group.style.animation = 'fadeIn 0.5s ease forwards';
+                }, 300 + (index * 100));
+            });
+
+            // Автофокус на поле ФИО
+            setTimeout(() => {
+                const fullNameField = document.getElementById('full_name');
+                if (fullNameField) {
+                    fullNameField.focus();
+                }
+            }, 700);
+        });
+
+        // Валидация формы перед отправкой
+        const registerForm = document.getElementById('registerForm');
+        if (registerForm) {
+            registerForm.addEventListener('submit', function(e) {
+                const fullName = document.getElementById('full_name');
+                const phone = document.getElementById('phone');
+                const password = document.getElementById('password');
+                const confirmPassword = document.getElementById('confirm_password');
+                
+                let isValid = true;
+                
+                // Удаляем старые сообщения об ошибках
+                clearFieldErrors();
+                
+                // Проверка ФИО
+                if (!fullName.value.trim()) {
+                    showFieldError(fullName, 'Введите ваше ФИО');
+                    isValid = false;
+                } else if (fullName.value.trim().length < 5) {
+                    showFieldError(fullName, 'Введите полное ФИО (минимум 5 символов)');
+                    isValid = false;
+                }
+                
+                // Проверка телефона
+                if (!phone.value.trim()) {
+                    showFieldError(phone, 'Введите номер телефона');
+                    isValid = false;
+                } else {
+                    const phoneValue = phone.value.replace(/\D/g, '');
+                    if (phoneValue.length < 10) {
+                        showFieldError(phone, 'Введите корректный номер телефона (минимум 10 цифр)');
+                        isValid = false;
+                    }
+                }
+                
+                // Проверка пароля
+                if (!password.value.trim()) {
+                    showFieldError(password, 'Введите пароль');
+                    isValid = false;
+                } else if (password.value.length < 6) {
+                    showFieldError(password, 'Пароль должен быть не менее 6 символов');
+                    isValid = false;
+                }
+                
+                // Проверка подтверждения пароля
+                if (!confirmPassword.value.trim()) {
+                    showFieldError(confirmPassword, 'Подтвердите пароль');
+                    isValid = false;
+                } else if (password.value !== confirmPassword.value) {
+                    showFieldError(confirmPassword, 'Пароли не совпадают');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    // Анимация ошибки
+                    const container = document.querySelector('.register-container');
+                    container.style.animation = 'shake 0.5s ease';
+                    setTimeout(() => {
+                        container.style.animation = '';
+                    }, 500);
+                } else {
+                    // Анимация успеха
+                    const btn = document.getElementById('submitBtn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="btn-icon">⏳</span> Регистрация...';
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    btn.style.cursor = 'wait';
+                    btn.style.animation = 'pulse 1s infinite';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                        btn.style.animation = '';
+                    }, 5000);
+                }
+            });
+        }
+
+        // Функции для работы с ошибками
+        function showFieldError(field, message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = message;
+            errorDiv.style.animation = 'fadeIn 0.3s ease';
+            
+            field.style.borderColor = '#dc3545';
+            field.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.1)';
+            
+            field.parentNode.insertBefore(errorDiv, field.nextSibling);
+            
+            field.addEventListener('input', function clearError() {
+                field.style.borderColor = '';
+                field.style.boxShadow = '';
+                if (errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+            }, { once: true });
+        }
+
+        function clearFieldErrors() {
+            document.querySelectorAll('.field-error').forEach(error => error.remove());
+            document.querySelectorAll('.form-control').forEach(field => {
+                field.style.borderColor = '';
+                field.style.boxShadow = '';
+            });
+        }
+
+        // Автоформатирование телефона
+        document.getElementById('phone')?.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length > 0) {
+                if (!value.startsWith('+7') && !value.startsWith('7') && !value.startsWith('8')) {
+                    value = '7' + value;
+                }
+                
+                let formatted = '+7';
+                if (value.length > 1) {
+                    formatted += ' (' + value.substring(1, 4);
+                }
+                if (value.length >= 5) {
+                    formatted += ') ' + value.substring(4, 7);
+                }
+                if (value.length >= 8) {
+                    formatted += '-' + value.substring(7, 9);
+                }
+                if (value.length >= 10) {
+                    formatted += '-' + value.substring(9, 11);
+                }
+                
+                this.value = formatted.substring(0, 18);
+            }
+        });
+
+        // Проверка пароля при вводе
+        document.getElementById('password')?.addEventListener('input', function() {
+            const confirmField = document.getElementById('confirm_password');
+            const password = this.value;
+            
+            if (password.length < 6) {
+                this.style.borderColor = '#dc3545';
+                this.nextElementSibling.textContent = '❌ Пароль слишком короткий (минимум 6 символов)';
+            } else {
+                this.style.borderColor = '#28a745';
+                this.nextElementSibling.textContent = '✅ Пароль подходит';
+            }
+            
+            if (confirmField.value) {
+                if (password !== confirmField.value) {
+                    confirmField.style.borderColor = '#dc3545';
+                    confirmField.nextElementSibling.textContent = '❌ Пароли не совпадают';
+                } else {
+                    confirmField.style.borderColor = '#28a745';
+                    confirmField.nextElementSibling.textContent = '✅ Пароли совпадают';
+                }
+            }
+        });
+
+        document.getElementById('confirm_password')?.addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            
+            if (this.value !== password) {
+                this.style.borderColor = '#dc3545';
+                this.nextElementSibling.textContent = '❌ Пароли не совпадают';
+            } else {
+                this.style.borderColor = '#28a745';
+                this.nextElementSibling.textContent = '✅ Пароли совпадают';
+            }
+        });
+    </script>
+</body>
+</html>

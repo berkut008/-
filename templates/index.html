@@ -1,0 +1,127 @@
+<!-- templates/dashboard/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления ПИНХ</title>
+    
+    <!-- ТОЛЬКО ЭТИ 2 СТРОКИ -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dashboard-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+        .logo-img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        .description {
+            color: #666;
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 25px 0;
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            width: 200px;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .logout-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="logo-header">
+            <!-- Логотип -->
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Логотип ПИНХ" class="logo-img">
+            <h1>Панель управления</h1>
+            <h2>ПИНХ ЭКОНОМИЧЕСКИЙ РОБОТОВЫЙ</h2>
+        </div>
+        
+        <p class="description">Добро пожаловать в систему управления учебным процессом. Здесь вы можете управлять студентами, группами и пропусками.</p>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>👨‍🎓 Студенты</h3>
+                <p>Управление базой данных студентов</p>
+            </div>
+            <div class="feature-card">
+                <h3>👥 Группы</h3>
+                <p>Создание и редактирование учебных групп</p>
+            </div>
+            <div class="feature-card">
+                <h3>📊 Пропуски</h3>
+                <p>Учёт посещаемости и пропусков</p>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('auth.logout') }}" class="logout-btn">Выйти из системы</a>
+    </div>
+</body>
+</html>

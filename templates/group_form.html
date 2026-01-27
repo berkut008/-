@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить группу | Финансово-экономический колледж РИНХ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            font-family: "Segoe UI", sans-serif;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Текст на заднем фоне */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+                linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            body::before {
+                background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+            }
+        }
+
+        .top-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+        }
+
+        .bottom-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255,255,255,0.6) 20%, 
+                rgba(255,255,255,0.8) 50%, 
+                rgba(255,255,255,0.6) 80%, 
+                transparent 100%);
+            z-index: 2;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(8px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        header img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        header img:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            color: #000;
+            animation: fadeIn 0.8s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+            position: relative;
+        }
+
+        .form-header::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #003366 20%, 
+                #0073e6 50%, 
+                #003366 80%, 
+                transparent 100%);
+            z-index: 1;
+        }
+
+        .form-title {
+            color: #003366;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-subtitle {
+            color: #666;
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 51, 102, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            animation: slideInUp 0.6s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                #003366 0%, 
+                #0073e6 50%, 
+                #003366 100%);
+            z-index: 1;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            color: white;
+            text-decoration: none;
+        }
+
+        .action-buttons-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(0, 51, 102, 0.1);
+        }
+
+        .left-button {
+            display: flex;
+            justify-content: flex-start;
+            flex: 1;
+        }
+
+        .right-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #003366, #0073e6);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            text-align: center;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+            background: linear-gradient(135deg, #0073e6, #003366);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-action:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #495057, #6c757d);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #003366, #0073e6);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+            background: linear-gradient(135deg, #0073e6, #003366);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .alert-warning {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ef6c00;
+            border-left: 4px solid #ff9800;
+        }
+
+        .alert-info {
+            background: rgba(33, 150, 243, 0.1);
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+            position: relative;
+            z-index: 3;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .form-label {
+            color: #003366;
+            font-weight: 600;
+            text-align: left;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid rgba(0, 51, 102, 0.2);
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0073e6;
+            box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem !important;
+            text-align: left;
+            animation: fadeIn 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        .mb-3:nth-child(1) { animation-delay: 0.1s; }
+        .mb-3:nth-child(2) { animation-delay: 0.2s; }
+        .mb-3:nth-child(3) { animation-delay: 0.3s; }
+
+        .d-flex {
+            display: flex !important;
+        }
+
+        .justify-content-between {
+            justify-content: space-between !important;
+        }
+
+        .align-items-center {
+            align-items: center !important;
+        }
+
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+
+        .m-0 {
+            margin: 0 !important;
+        }
+
+        /* Анимации для формы */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .form-card:hover {
+            animation: pulse 2s infinite;
+        }
+
+        /* Стили для сообщений */
+        .flash-messages {
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .form-card {
+                padding: 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+            }
+            
+            .action-buttons-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .left-button, .right-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn-action {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .btn-nav {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .right-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-action {
+                width: 100%;
+            }
+            
+            .form-title {
+                font-size: 1.3rem;
+            }
+            
+            .dashboard-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя декоративная линия -->
+    <div class="top-line"></div>
+
+    <!-- Шапка -->
+    <header>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+            <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+                <span class="icon"></span>
+                Выйти
+            </a>
+        </div>
+    </header>
+
+    <!-- Основное содержимое -->
+    <div class="main-content">
+        <div class="dashboard-container">
+            <div class="form-header">
+                <h1 class="form-title">
+                    📚 Добавить новую группу
+                </h1>
+                <p class="form-subtitle">
+                    Заполните форму ниже для создания новой учебной группы
+                </p>
+            </div>
+
+            <!-- Сообщения -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, msg in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <span class="icon me-2">
+                                        {% if category == 'success' %}✅
+                                        {% elif category == 'danger' %}❌
+                                        {% elif category == 'warning' %}⚠️
+                                        {% else %}ℹ️
+                                        {% endif %}
+                                    </span>
+                                    <div>{{ msg }}</div>
+                                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="form-card">
+                <form method="POST" id="addGroupForm">
+                    <div class="mb-3">
+                        <label class="form-label">🎓 Название группы</label>
+                        <input type="text" name="name" class="form-control" required 
+                               placeholder="Например: ФК-21-1" 
+                               onfocus="this.style.borderColor='#0073e6'; this.style.boxShadow='0 0 0 0.25rem rgba(0, 115, 230, 0.25)'"
+                               onblur="this.style.borderColor='rgba(0, 51, 102, 0.2)'; this.style.boxShadow='none'">
+                        <small class="text-muted">Укажите уникальное название группы</small>
+                    </div>
+
+                    {% if current_user.role == 'admin' %}
+                    <div class="mb-3">
+                        <label class="form-label">👨‍🏫 Куратор группы</label>
+                        <select name="curator_id" class="form-select" required
+                                onfocus="this.style.borderColor='#0073e6'; this.style.boxShadow='0 0 0 0.25rem rgba(0, 115, 230, 0.25)'"
+                                onblur="this.style.borderColor='rgba(0, 51, 102, 0.2)'; this.style.boxShadow='none'">
+                            <option value="">-- Выберите куратора --</option>
+                            {% for curator in curators %}
+                                <option value="{{ curator.id }}">{{ curator.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Выберите куратора, который будет отвечать за группу</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="action-buttons-container">
+                        <div class="left-button">
+                            <a href="{{ url_for('dashboard.groups_list') }}" class="btn-action btn-secondary">
+                                <span class="icon">⬅</span>
+                                Назад к списку групп
+                            </a>
+                        </div>
+                        <div class="right-buttons">
+                            <button type="submit" class="btn-action btn-primary" id="submitBtn">
+                                <span class="icon">➕</span>
+                                Создать группу
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижняя декоративная линия -->
+    <div class="bottom-line"></div>
+
+    <!-- Футер -->
+    <div class="footer">
+        <div class="footer-text">
+            © 2025г. Финансово-экономический колледж (РИНХ)
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Анимация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardContainer = document.querySelector('.dashboard-container');
+            dashboardContainer.style.opacity = '0';
+            dashboardContainer.style.transform = 'translateY(30px) scale(0.95)';
+            
+            setTimeout(() => {
+                dashboardContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                dashboardContainer.style.opacity = '1';
+                dashboardContainer.style.transform = 'translateY(0) scale(1)';
+            }, 200);
+            
+            // Анимация элементов формы
+            const formElements = document.querySelectorAll('.mb-3');
+            formElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.5s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 300 + (index * 100));
+            });
+            
+            // Анимация кнопок
+            const buttons = document.querySelectorAll('.btn-action');
+            buttons.forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    btn.style.transition = 'all 0.5s ease';
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'translateY(0)';
+                }, 600 + (index * 100));
+            });
+            
+            // Анимация сообщений
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach((alert, index) => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    alert.style.transition = 'all 0.5s ease';
+                    alert.style.opacity = '1';
+                    alert.style.transform = 'translateX(0)';
+                }, 100 + (index * 100));
+            });
+            
+            // Автоматическое скрытие сообщений через 5 секунд
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            });
+        });
+        
+        // Обработка отправки формы
+        document.getElementById('addGroupForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Показываем индикатор загрузки
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Создание...';
+            submitBtn.disabled = true;
+            
+            // Имитация задержки для демонстрации анимации
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+        
+        // Валидация формы
+        function validateForm() {
+            const groupName = document.querySelector('input[name="name"]');
+            const curatorSelect = document.querySelector('select[name="curator_id"]');
+            let isValid = true;
+            
+            // Проверка названия группы
+            if (!groupName.value.trim()) {
+                showValidationError(groupName, 'Пожалуйста, введите название группы');
+                isValid = false;
+            } else {
+                clearValidationError(groupName);
+            }
+            
+            // Проверка выбора куратора (если доступно)
+            if (curatorSelect && !curatorSelect.value) {
+                showValidationError(curatorSelect, 'Пожалуйста, выберите куратора');
+                isValid = false;
+            } else if (curatorSelect) {
+                clearValidationError(curatorSelect);
+            }
+            
+            return isValid;
+        }
+        
+        function showValidationError(element, message) {
+            element.style.borderColor = '#dc3545';
+            element.style.boxShadow = '0 0 0 0.25rem rgba(220, 53, 69, 0.25)';
+            
+            // Удаляем старое сообщение об ошибке
+            const existingError = element.nextElementSibling;
+            if (existingError && existingError.classList.contains('error-message')) {
+                existingError.remove();
+            }
+            
+            // Добавляем новое сообщение об ошибке
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message text-danger mt-1 small';
+            errorDiv.textContent = message;
+            element.parentNode.appendChild(errorDiv);
+            
+            // Анимация ошибки
+            errorDiv.style.opacity = '0';
+            errorDiv.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                errorDiv.style.transition = 'all 0.3s ease';
+                errorDiv.style.opacity = '1';
+                errorDiv.style.transform = 'translateY(0)';
+            }, 10);
+        }
+        
+        function clearValidationError(element) {
+            element.style.borderColor = '';
+            element.style.boxShadow = '';
+            
+            // Удаляем сообщение об ошибке
+            const errorDiv = element.nextElementSibling;
+            if (errorDiv && errorDiv.classList.contains('error-message')) {
+                errorDiv.style.opacity = '0';
+                errorDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 300);
+            }
+        }
+        
+        // Обработчики для полей формы
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('input', function() {
+                clearValidationError(this);
+            });
+            
+            element.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    showValidationError(this, 'Это поле обязательно для заполнения');
+                }
+            });
+        });
+        
+        // Добавляем обработчик отправки формы с валидацией
+        document.getElementById('addGroupForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                
+                // Анимация тряски для формы
+                const formCard = document.querySelector('.form-card');
+                formCard.style.animation = 'none';
+                setTimeout(() => {
+                    formCard.style.animation = 'shake 0.5s ease';
+                }, 10);
+                
+                // Удаляем анимацию тряски через 0.5 секунд
+                setTimeout(() => {
+                    formCard.style.animation = '';
+                }, 500);
+            }
+        });
+        
+        // Добавляем ключевые кадры для анимации тряски
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Плавный скролл к форме при наличии ошибок
+        function scrollToForm() {
+            const formCard = document.querySelector('.form-card');
+            formCard.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+        
+        // Если есть сообщения об ошибках, прокручиваем к форме
+        if (document.querySelector('.error-message')) {
+            setTimeout(scrollToForm, 500);
+        }
+    </script>
+</body>
+</html>

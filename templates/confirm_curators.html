@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✅ Подтверждение кураторов | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 2rem;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 900px;
+    }
+
+    .panel h3 {
+      color: #ffcc00;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    table {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: rgba(0, 51, 102, 0.7);
+    }
+
+    tbody tr:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    .btn-confirm {
+      background-color: #00cc66;
+      border: none;
+      color: #fff;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-confirm:hover {
+      background-color: #00e676;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0,255,100,0.5);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.25);
+      font-size: 0.9rem;
+    }
+
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="d-flex align-items-center gap-2">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+    <h5 class="m-0">Финансово-экономический колледж РИНХ</h5>
+  </div>
+  <a href="{{ url_for('auth.logout') }}" class="btn btn-light">🚪 Выйти</a>
+</header>
+
+<main>
+  <div class="panel">
+    <h3>✅ Кураторы, ожидающие подтверждения</h3>
+
+    {% if curators %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle text-white">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ФИО</th>
+            <th>Телефон</th>
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for c in curators %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ c.full_name }}</td>
+            <td>{{ c.phone or '-' }}</td>
+            <td>
+              <a href="{{ url_for('dashboard.confirm_curator', curator_id=c.id) }}" class="btn btn-confirm btn-sm">Подтвердить</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-center text-light mt-3">✅ Все кураторы уже подтверждены.</p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+      <a href="{{ url_for('dashboard.admin_dashboard') }}" class="btn btn-light">⬅ Назад в панель администратора</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2025г. Финансово-экономический колледж (РИНХ)
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

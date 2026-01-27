@@ -1,0 +1,733 @@
+<!-- templates/settings.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Настройки профиля | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      background-size: 50px 50px, 50px 50px, 500px 500px, 500px 500px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      body::before {
+        background-size: 30px 30px, 30px 30px, 300px 300px, 300px 300px;
+      }
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      color: white;
+      text-decoration: none;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .dashboard-container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      color: #000;
+      animation: fadeIn 0.8s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      position: relative;
+      z-index: 4;
+      margin: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .form-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .form-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 2px solid rgba(0, 51, 102, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      font-size: 1rem;
+      color: #003366;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #0073e6;
+      box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      border: none;
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+      background: linear-gradient(135deg, #0073e6, #003366);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 51, 102, 0.1);
+      border: 2px solid #003366;
+      color: #003366;
+      padding: 0.9rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: #003366;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+      text-decoration: none;
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-danger {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border-left: 4px solid #dc3545;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .user-info-card {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .info-value {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .badge {
+      font-size: 0.8em;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-weight: 600;
+    }
+
+    .bg-danger { background-color: #dc3545 !important; }
+    .bg-primary { background-color: #0073e6 !important; }
+    .bg-success { background-color: #28a745 !important; }
+    .bg-warning { 
+      background-color: #ffc107 !important; 
+      color: #000 !important; 
+    }
+
+    .security-alert {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+      color: #856404;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      margin: 2rem 0;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Анимации */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        text-align: center;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .dashboard-container {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+      <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+        <span class="icon"></span>
+        Выйти
+      </a>
+    </div>
+  </header>
+
+  <!-- Основное содержимое -->
+  <div class="main-content">
+    <div class="dashboard-container">
+      <div class="form-header">
+        <h1 class="form-title">
+          ⚙️ Настройки профиля
+        </h1>
+        <p class="form-subtitle">
+          Измените данные вашего профиля и пароль
+        </p>
+      </div>
+
+      <!-- Сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <span class="icon me-2">
+                  {% if category == 'success' %}✅
+                  {% elif category == 'danger' %}❌
+                  {% elif category == 'warning' %}⚠️
+                  {% else %}ℹ️
+                  {% endif %}
+                </span>
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Информация о пользователе -->
+      <div class="user-info-card">
+        <h5 style="color: white; margin-bottom: 1rem;">👤 Информация об аккаунте</h5>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Роль:</span>
+            <span class="info-value">
+              <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'curator' %}bg-primary{% else %}bg-success{% endif %}">
+                {% if user.role == 'admin' %}Администратор
+                {% elif user.role == 'curator' %}Куратор
+                {% else %}Староста{% endif %}
+              </span>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Статус:</span>
+            <span class="info-value">
+              <span class="badge {% if user.is_confirmed %}bg-success{% else %}bg-warning{% endif %}">
+                {% if user.is_confirmed %}✅ Подтверждён
+                {% else %}⏳ Ожидает подтверждения{% endif %}
+              </span>
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата регистрации:</span>
+            <span class="info-value">
+              {% if user.created_at %}
+                {{ user.created_at.strftime('%d.%m.%Y') }}
+              {% else %}
+                Не указана
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Форма настроек -->
+      <form method="POST" id="settingsForm" onsubmit="return validatePassword()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+        
+        <div class="form-group">
+          <label class="form-label">ФИО *</label>
+          <input type="text" name="full_name" value="{{ user.full_name }}" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Телефон *</label>
+          <input type="text" name="phone" value="{{ user.phone }}" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" value="{{ user.email or '' }}" class="form-control" placeholder="email@example.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Telegram</label>
+          <input type="text" name="telegram" value="{{ user.telegram or '' }}" class="form-control" placeholder="@username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Название MAX</label>
+          <input type="text" name="max_name" value="{{ user.max_name or '' }}" class="form-control" placeholder="Введите название MAX">
+        </div>
+
+        <hr>
+
+        <h5 style="color: #003366; margin-bottom: 1.5rem; font-weight: 600;">🔒 Смена пароля</h5>
+        
+        <div class="security-alert">
+          🔒 <strong>Важно:</strong> Для смены пароля необходимо ввести текущий пароль
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Текущий пароль</label>
+          <input type="password" name="current_password" id="current_password" class="form-control" 
+                 placeholder="Введите текущий пароль для изменения">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Новый пароль</label>
+          <input type="password" name="password" id="password" class="form-control" 
+                 placeholder="Оставьте пустым, если не хотите менять">
+          <small class="text-muted">Пароль должен содержать не менее 6 символов</small>
+          <div class="text-danger small mt-1" id="password-feedback" style="display: none;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Подтвердите новый пароль</label>
+          <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Повторите новый пароль">
+          <div class="text-danger small mt-1" id="confirm-feedback" style="display: none;"></div>
+        </div>
+
+        <div class="security-alert">
+          ⚠️ <strong>Внимание:</strong> После смены пароля вам потребуется войти в систему заново
+        </div>
+
+        <div class="form-actions">
+          <a href="{{ url_for('dashboard.index') }}" class="btn-secondary">
+            ↩ Назад
+          </a>
+          <button type="submit" class="btn-primary">
+            💾 Сохранить изменения
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <!-- Футер -->
+  <div class="footer">
+    <div class="footer-text">
+      © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Анимация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      const dashboardContainer = document.querySelector('.dashboard-container');
+      dashboardContainer.style.opacity = '0';
+      dashboardContainer.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        dashboardContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        dashboardContainer.style.opacity = '1';
+        dashboardContainer.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+    });
+
+    // Валидация пароля
+    function validatePassword() {
+      const currentPassword = document.getElementById('current_password').value;
+      const newPassword = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      const passwordFeedback = document.getElementById('password-feedback');
+      const confirmFeedback = document.getElementById('confirm-feedback');
+      
+      // Сброс ошибок
+      passwordFeedback.style.display = 'none';
+      confirmFeedback.style.display = 'none';
+      
+      // Если введен новый пароль
+      if (newPassword) {
+        // Проверка длины пароля
+        if (newPassword.length < 6) {
+          passwordFeedback.textContent = 'Пароль должен содержать не менее 6 символов';
+          passwordFeedback.style.display = 'block';
+          document.getElementById('password').focus();
+          return false;
+        }
+        
+        // Проверка совпадения паролей
+        if (newPassword !== confirmPassword) {
+          confirmFeedback.textContent = 'Пароли не совпадают';
+          confirmFeedback.style.display = 'block';
+          document.getElementById('confirm_password').focus();
+          return false;
+        }
+        
+        // Проверка наличия текущего пароля
+        if (!currentPassword) {
+          passwordFeedback.textContent = 'Для смены пароля введите текущий пароль';
+          passwordFeedback.style.display = 'block';
+          document.getElementById('current_password').focus();
+          return false;
+        }
+      }
+      
+      // Если введен текущий пароль, но нет нового
+      if (currentPassword && !newPassword) {
+        passwordFeedback.textContent = 'Введите новый пароль для изменения';
+        passwordFeedback.style.display = 'block';
+        document.getElementById('password').focus();
+        return false;
+      }
+      
+      return true;
+    }
+    
+    // Проверка совпадения паролей при вводе
+    document.getElementById('confirm_password')?.addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirm = this.value;
+      const feedback = document.getElementById('confirm-feedback');
+      
+      if (password && confirm && password !== confirm) {
+        feedback.textContent = 'Пароли не совпадают';
+        feedback.style.display = 'block';
+      } else {
+        feedback.style.display = 'none';
+      }
+    });
+    
+    // Проверка длины пароля при вводе
+    document.getElementById('password')?.addEventListener('input', function() {
+      const feedback = document.getElementById('password-feedback');
+      if (this.value.length > 0 && this.value.length < 6) {
+        feedback.textContent = 'Пароль должен содержать не менее 6 символов';
+        feedback.style.display = 'block';
+      } else {
+        feedback.style.display = 'none';
+      }
+    });
+
+    // Автоформатирование телефона
+    document.querySelector('input[name="phone"]')?.addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, '');
+      
+      if (value.length > 0) {
+        let formatted = '';
+        
+        if (value.startsWith('7') || value.startsWith('8')) {
+          formatted = '+7';
+          if (value.length > 1) formatted += ' (' + value.substring(1, 4);
+          if (value.length >= 5) formatted += ') ' + value.substring(4, 7);
+          if (value.length >= 8) formatted += '-' + value.substring(7, 9);
+          if (value.length >= 10) formatted += '-' + value.substring(9, 11);
+        } else {
+          if (value.length <= 3) {
+            formatted = value;
+          } else if (value.length <= 6) {
+            formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3);
+          } else if (value.length <= 8) {
+            formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6);
+          } else {
+            formatted = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6, 8) + '-' + value.substring(8, 10);
+          }
+        }
+        
+        this.value = formatted.substring(0, 20);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактировать студента</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <h3 class="mb-4">✏️ Редактирование студента</h3>
+
+  <form method="POST" action="{{ url_for('dashboard.edit_student', student_id=student.id) }}">
+    <div class="mb-3">
+      <label class="form-label">ФИО</label>
+      <input type="text" class="form-control" name="full_name" value="{{ student.full_name }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Группа</label>
+      <select class="form-select" name="group_id" required>
+        {% for g in groups %}
+          <option value="{{ g.id }}" {% if student.group_id == g.id %}selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+    <a href="{{ url_for('dashboard.students_list') }}" class="btn btn-secondary">Отмена</a>
+  </form>
+</div>
+</body>
+</html>

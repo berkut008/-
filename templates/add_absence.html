@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавить пропуск | Финансово-экономический колледж (РИНХ)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Линии на заднем фоне */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+          linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+          linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%);
+      background-size: 50px 50px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Верхняя декоративная линия */
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+          transparent 0%, 
+          rgba(255,255,255,0.6) 20%, 
+          rgba(255,255,255,0.8) 50%, 
+          rgba(255,255,255,0.6) 80%, 
+          transparent 100%);
+      z-index: 2;
+    }
+
+    /* Нижняя декоративная линия */
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+          transparent 0%, 
+          rgba(255,255,255,0.6) 20%, 
+          rgba(255,255,255,0.8) 50%, 
+          rgba(255,255,255,0.6) 80%, 
+          transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .main-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .container-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+      color: #000;
+      width: 100%;
+      max-width: 800px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: fadeIn 0.6s ease;
+      margin-bottom: 30px;
+    }
+
+    /* Декоративный акцент на карточке */
+    .container-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+          #003366 0%, 
+          #0073e6 50%, 
+          #003366 100%);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h3 {
+      font-weight: 600;
+      color: #003366;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    h3::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+          transparent 0%, 
+          #003366 20%, 
+          #0073e6 50%, 
+          #003366 80%, 
+          transparent 100%);
+    }
+
+    .btn-primary {
+      background-color: #003366;
+      border: none;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      padding: 10px 20px;
+    }
+
+    .btn-primary:hover {
+      background-color: #0073e6;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 115, 230, 0.4);
+    }
+
+    .btn-outline-secondary {
+      border: 1px solid #003366;
+      color: #003366;
+      border-radius: 8px;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #003366;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+      .container-card {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        text-align: center;
+      }
+      
+      .header-buttons {
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .header-buttons .btn {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .container-card {
+        padding: 1rem;
+      }
+      
+      h3 {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* Стили для формы */
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .form-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .form-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #0073e6;
+      display: inline-block;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-10px) rotate(5deg); }
+      75% { transform: translateY(-5px) rotate(-5deg); }
+    }
+
+    .form-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 51, 102, 0.1);
+      position: relative;
+      overflow: hidden;
+      animation: cardAppear 0.6s ease-out 0.2s backwards;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        #003366 0%, 
+        #0073e6 50%, 
+        #003366 100%);
+      z-index: 1;
+    }
+
+    .form-label {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+      position: relative;
+    }
+
+    .required::after {
+      content: " *";
+      color: #f44336;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid rgba(0, 51, 102, 0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+      position: relative;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #0073e6;
+      box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .form-icon-field {
+      position: absolute;
+      right: 15px;
+      top: 40px;
+      color: rgba(0, 51, 102, 0.5);
+      font-size: 1.2rem;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+      animation: slideInLeft 0.5s ease-out;
+      animation-fill-mode: backwards;
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.3s; }
+    .form-group:nth-child(2) { animation-delay: 0.4s; }
+    .form-group:nth-child(3) { animation-delay: 0.5s; }
+    .form-group:nth-child(4) { animation-delay: 0.6s; }
+
+    .info-text {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid rgba(0, 51, 102, 0.2);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(0, 51, 102, 0.1);
+      animation: fadeIn 0.8s ease-out 0.7s backwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .btn-back {
+      background: rgba(0, 51, 102, 0.1);
+      border: 2px solid #003366;
+      color: #003366;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.5s ease-out 0.8s backwards;
+    }
+
+    .btn-back:hover {
+      background: #003366;
+      color: white;
+      transform: translateX(-5px);
+      box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+    }
+
+    .btn-back::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .btn-back:hover::before {
+      left: 100%;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #003366, #0073e6);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.5s ease-out 0.9s backwards;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.4);
+      background: linear-gradient(135deg, #0073e6, #003366);
+    }
+
+    .btn-submit:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-submit::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-100%);
+    }
+
+    .btn-submit:hover::after {
+      animation: shine 0.6s;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Анимация успешной отправки */
+    @keyframes successPulse {
+      0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+    }
+
+    .success-animation {
+      animation: successPulse 1.5s;
+    }
+
+    /* Анимация валидации */
+    .validation-error {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <header>
+    <div class="d-flex align-items-center gap-2">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+        <h5 class="m-0">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-light">Выйти</a>
+  </header>
+
+  <div class="main-container">
+    <div class="container-card">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>📝 Добавить пропуск</h3>
+        <div class="header-buttons">
+        </div>
+      </div>
+
+      <!-- Флеш-сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show mb-4" role="alert">
+              <div class="d-flex align-items-center">
+                {% if category == 'success' %}
+                  <span class="me-2">✅</span>
+                {% elif category == 'danger' %}
+                  <span class="me-2">❌</span>
+                {% elif category == 'warning' %}
+                  <span class="me-2">⚠️</span>
+                {% else %}
+                  <span class="me-2">ℹ️</span>
+                {% endif %}
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="form-card">
+        <form method="POST" id="addAbsenceForm">
+          <div class="form-group">
+            <label for="student_id" class="form-label required">Студент</label>
+            <div class="position-relative">
+              <select name="student_id" id="student_id" class="form-select" required 
+                     data-bs-toggle="tooltip" data-bs-placement="top" 
+                     title="Выберите студента из списка">
+                <option value="">Выберите студента...</option>
+                {% for student in students %}
+                  <option value="{{ student.id }}">{{ student.full_name }}</option>
+                {% endfor %}
+              </select>
+              <span class="form-icon-field"></span>
+            </div>
+            <div class="info-text">
+              Выберите студента, для которого добавляется пропуск
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="date" class="form-label required">Дата и время пропуска</label>
+            <div class="position-relative">
+              <input type="datetime-local" name="date" id="date" class="form-control" required
+                     data-bs-toggle="tooltip" data-bs-placement="top"
+                     title="Укажите дату и время пропуска">
+              <span class="form-icon-field"></span>
+            </div>
+            <div class="info-text">
+              Укажите дату и время начала пропуска
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reason" class="form-label">Причина пропуска</label>
+            <div class="position-relative">
+              <input type="text" name="reason" id="reason" class="form-control" 
+                     placeholder="Например: болезнь, уважительная причина, семейные обстоятельства"
+                     data-bs-toggle="tooltip" data-bs-placement="top"
+                     title="Опишите причину пропуска (необязательно)">
+              <span class="form-icon-field"></span>
+            </div>
+            <div class="info-text">
+              Можно оставить пустым или указать краткую причину
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lessons_count" class="form-label required">Количество пропущенных занятий</label>
+            <div class="position-relative">
+              <input type="number" name="lessons_count" id="lessons_count" 
+                     class="form-control" min="1" max="12" value="1" required
+                     data-bs-toggle="tooltip" data-bs-placement="top"
+                     title="Введите количество пропущенных учебных занятий (1-12)">
+              <span class="form-icon-field"></span>
+            </div>
+            <div class="info-text">
+              Укажите количество пропущенных учебных занятий (пары)
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="{{ url_for('dashboard.absences_list') }}" class="btn-back">
+              <span>←</span>
+              Назад к списку
+            </a>
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <span>✓</span>
+              Добавить пропуск
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Дополнительная информация -->
+      <div class="mt-4 text-center">
+        <small class="text-muted">
+          <strong>Примечание:</strong> 
+          Добавленный пропуск сразу появится в системе учёта посещаемости.
+          Для редактирования или удаления используйте список пропусков.
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <div class="footer">
+    © 2025г. Финансово-экономический колледж (РИНХ)
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Инициализация tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+          trigger: 'hover focus'
+        });
+      });
+      
+      // Анимация при загрузке страницы
+      const containerCard = document.querySelector('.container-card');
+      containerCard.style.opacity = '0';
+      containerCard.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        containerCard.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        containerCard.style.opacity = '1';
+        containerCard.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+      
+      // Анимация элементов формы
+      const formGroups = document.querySelectorAll('.form-group');
+      formGroups.forEach((group, index) => {
+        group.style.opacity = '0';
+        group.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+          group.style.transition = 'all 0.5s ease';
+          group.style.opacity = '1';
+          group.style.transform = 'translateX(0)';
+        }, 300 + (index * 100));
+      });
+      
+      // Установка текущей даты в поле datetime-local
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      
+      const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+      const dateInput = document.getElementById('date');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = currentDateTime;
+      }
+      
+      // Автофокус на первое поле
+      setTimeout(() => {
+        const firstField = document.getElementById('student_id');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 500);
+    });
+
+    // Обработка отправки формы
+    const form = document.getElementById('addAbsenceForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    form.addEventListener('submit', function(e) {
+      // Валидация
+      const studentId = document.getElementById('student_id').value;
+      const date = document.getElementById('date').value;
+      const lessonsCount = document.getElementById('lessons_count').value;
+      
+      let isValid = true;
+      let errorMessage = '';
+      
+      if (!studentId) {
+        isValid = false;
+        errorMessage = 'Пожалуйста, выберите студента';
+        document.getElementById('student_id').classList.add('validation-error');
+      }
+      
+      if (!date) {
+        isValid = false;
+        errorMessage = 'Пожалуйста, укажите дату пропуска';
+        document.getElementById('date').classList.add('validation-error');
+      }
+      
+      if (!lessonsCount || lessonsCount < 1 || lessonsCount > 12) {
+        isValid = false;
+        errorMessage = 'Количество занятий должно быть от 1 до 12';
+        document.getElementById('lessons_count').classList.add('validation-error');
+      }
+      
+      if (!isValid) {
+        e.preventDefault();
+        
+        // Показываем сообщение об ошибке
+        showAlert(errorMessage, 'warning');
+        
+        // Удаляем класс анимации через время
+        setTimeout(() => {
+          document.querySelectorAll('.validation-error').forEach(el => {
+            el.classList.remove('validation-error');
+          });
+        }, 500);
+        
+        return false;
+      }
+      
+      // Анимация отправки
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳</span> Добавление...';
+      
+      // Добавляем класс успешной отправки
+      setTimeout(() => {
+        submitBtn.classList.add('success-animation');
+      }, 100);
+      
+      return true;
+    });
+
+    // Функция показа уведомления
+    function showAlert(message, type = 'info') {
+      // Удаляем предыдущие уведомления
+      const existingAlerts = document.querySelectorAll('.alert');
+      existingAlerts.forEach(alert => {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          if (alert.parentNode) {
+            alert.parentNode.removeChild(alert);
+          }
+        }, 300);
+      });
+      
+      // Создаем новое уведомление
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show mb-4`;
+      alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+          <span class="me-2">${type === 'warning' ? '⚠️' : type === 'danger' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</span>
+          <div>${message}</div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      // Анимация появления
+      alertDiv.style.opacity = '0';
+      alertDiv.style.transform = 'translateX(20px)';
+      
+      // Вставляем уведомление
+      const containerCard = document.querySelector('.container-card');
+      const firstChild = containerCard.firstChild;
+      containerCard.insertBefore(alertDiv, firstChild.nextSibling);
+      
+      // Анимируем появление
+      setTimeout(() => {
+        alertDiv.style.transition = 'all 0.3s ease';
+        alertDiv.style.opacity = '1';
+        alertDiv.style.transform = 'translateX(0)';
+      }, 10);
+      
+      // Автоматическое скрытие через 5 секунд
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.style.opacity = '0';
+          alertDiv.style.transform = 'translateX(-20px)';
+          setTimeout(() => {
+            if (alertDiv.parentNode) {
+              alertDiv.parentNode.removeChild(alertDiv);
+            }
+          }, 300);
+        }
+      }, 5000);
+    }
+
+    // Подсветка обязательных полей при фокусе
+    document.querySelectorAll('[required]').forEach(field => {
+      field.addEventListener('focus', function() {
+        this.style.borderColor = '#0073e6';
+        this.style.boxShadow = '0 0 0 0.25rem rgba(0, 115, 230, 0.25)';
+        this.style.transform = 'translateY(-2px)';
+      });
+      
+      field.addEventListener('blur', function() {
+        this.style.transform = 'translateY(0)';
+        if (this.value.trim()) {
+          this.style.borderColor = '#4caf50';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(76, 175, 80, 0.1)';
+        } else {
+          this.style.borderColor = 'rgba(0, 51, 102, 0.2)';
+          this.style.boxShadow = 'none';
+        }
+      });
+    });
+
+    // Динамическая проверка количества занятий
+    const lessonsCountInput = document.getElementById('lessons_count');
+    if (lessonsCountInput) {
+      lessonsCountInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 1) this.value = 1;
+        if (value > 12) this.value = 12;
+        
+        // Анимация изменения значения
+        this.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 150);
+      });
+    }
+
+    // Эффект при наведении на кнопки
+    document.querySelectorAll('.btn-back, .btn-submit, .btn-light').forEach(btn => {
+      btn.addEventListener('mouseenter', function() {
+        this.style.transform = this.classList.contains('btn-submit') 
+          ? 'translateY(-3px) scale(1.05)' 
+          : 'translateY(-2px) scale(1.05)';
+      });
+      
+      btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Сохранение данных формы при перезагрузке (опционально)
+    const formData = {};
+    document.querySelectorAll('#addAbsenceForm input, #addAbsenceForm select').forEach(field => {
+      field.addEventListener('change', function() {
+        formData[this.id] = this.value;
+        try {
+          localStorage.setItem('absenceFormData', JSON.stringify(formData));
+        } catch(e) {}
+      });
+    });
+
+    // Восстановление данных при загрузке
+    try {
+      const savedData = JSON.parse(localStorage.getItem('absenceFormData'));
+      if (savedData) {
+        Object.keys(savedData).forEach(key => {
+          const field = document.getElementById(key);
+          if (field && savedData[key]) {
+            field.value = savedData[key];
+          }
+        });
+      }
+    } catch(e) {
+      // Игнорируем ошибки localStorage
+    }
+
+    // Очистка сохраненных данных при успешной отправке
+    form.addEventListener('submit', function() {
+      try {
+        localStorage.removeItem('absenceFormData');
+      } catch(e) {}
+    });
+
+    // Анимация при выборе опции в селекте
+    document.getElementById('student_id').addEventListener('change', function() {
+      if (this.value) {
+        this.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+        setTimeout(() => {
+          this.style.backgroundColor = '';
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>

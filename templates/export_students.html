@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экспорт студентов | Финансово-экономический колледж РИНХ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(-45deg, #003366, #004c99, #0073e6, #003366);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: "Segoe UI", sans-serif;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Линии на заднем фоне */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.1) 100%),
+        linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.1) 100%);
+      background-size: 50px 50px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .top-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    .bottom-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255,255,255,0.6) 20%, 
+        rgba(255,255,255,0.8) 50%, 
+        rgba(255,255,255,0.6) 80%, 
+        transparent 100%);
+      z-index: 2;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    header img {
+      height: 50px;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .export-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      color: #000;
+      animation: fadeIn 0.8s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      position: relative;
+      z-index: 4;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+      position: relative;
+    }
+
+    .form-header::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        #003366 20%, 
+        #0073e6 50%, 
+        #003366 80%, 
+        transparent 100%);
+      z-index: 1;
+    }
+
+    .form-title {
+      color: #003366;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 51, 102, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        #003366 0%, 
+        #0073e6 50%, 
+        #003366 100%);
+      z-index: 1;
+    }
+
+    .form-label {
+      color: #003366;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control, .form-select {
+      border: 2px solid rgba(0, 51, 102, 0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #0073e6;
+      box-shadow: 0 0 0 0.25rem rgba(0, 115, 230, 0.25);
+      outline: none;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(0, 51, 102, 0.1);
+      gap: 15px;
+    }
+
+    .btn-back {
+      background: rgba(0, 51, 102, 0.1);
+      border: 2px solid #003366;
+      color: #003366;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-back:hover {
+      background: #003366;
+      color: white;
+      transform: translateX(-5px);
+      box-shadow: 0 5px 15px rgba(0, 51, 102, 0.3);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+      background: linear-gradient(135deg, #20c997, #28a745);
+    }
+
+    .btn-preview {
+      background: linear-gradient(135deg, #ff9800, #ff5722);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-preview:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255, 87, 34, 0.4);
+      background: linear-gradient(135deg, #ff5722, #ff9800);
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .alert-success {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+
+    .alert-danger {
+      background: rgba(244, 67, 54, 0.1);
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+
+    .alert-warning {
+      background: rgba(255, 152, 0, 0.1);
+      color: #ef6c00;
+      border-left: 4px solid #ff9800;
+    }
+
+    .alert-info {
+      background: rgba(33, 150, 243, 0.1);
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .required::after {
+      content: " *";
+      color: #f44336;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    .icon {
+      font-size: 1.2rem;
+    }
+
+    .info-text {
+      color: #666;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid rgba(0, 51, 102, 0.2);
+    }
+
+    .instructions {
+      background: rgba(0, 51, 102, 0.08);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid #0073e6;
+    }
+
+    .instructions h5 {
+      color: #003366;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .instructions ul {
+      margin-bottom: 0;
+      padding-left: 1.5rem;
+    }
+
+    .instructions li {
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+
+    code {
+      background: rgba(0, 51, 102, 0.15);
+      color: #0073e6;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      font-weight: 500;
+      font-family: 'Courier New', monospace;
+    }
+
+    @media (max-width: 768px) {
+      .export-container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .btn-back, .btn-preview, .btn-submit {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+      }
+      
+      .logo-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .form-card {
+        padding: 1.5rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+      
+      .date-input-group {
+        flex-direction: column;
+      }
+    }
+
+    /* Стили для выбора формата экспорта */
+    .format-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .format-option {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .format-option.active {
+      background: #e7f1ff;
+      border-color: #0073e6;
+      color: #0073e6;
+      font-weight: 600;
+    }
+
+    .format-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .format-icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Стили для выбора периода */
+    .period-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .period-btn {
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .period-btn.active {
+      background: #e7f1ff;
+      border-color: #0073e6;
+      color: #0073e6;
+      font-weight: 600;
+    }
+
+    .period-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Стили для произвольного периода */
+    .date-range-container {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+    }
+
+    .date-range-container.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .date-input-group {
+      display: flex;
+      gap: 15px;
+    }
+
+    .date-input-group > div {
+      flex: 1;
+    }
+
+    /* Стили для предварительного просмотра */
+    .export-preview {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 2px dashed #dee2e6;
+    }
+
+    .preview-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .preview-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+    }
+
+    .student-count {
+      text-align: center;
+      font-weight: 600;
+      color: #003366;
+      margin-top: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #0073e6;
+    }
+
+    /* Стили для статистики */
+    .preview-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0073e6;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Чекбоксы */
+    .form-check {
+      margin-bottom: 10px;
+    }
+
+    .form-check-input:checked {
+      background-color: #0073e6;
+      border-color: #0073e6;
+    }
+
+    /* Бейджи */
+    .badge {
+      font-size: 0.8em;
+      padding: 4px 8px;
+    }
+
+    /* Расстояние между кнопками */
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя декоративная линия -->
+  <div class="top-line"></div>
+
+  <!-- Шапка -->
+  <header>
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="РИНХ">
+      <h5 class="header-title">Финансово-экономический колледж (РИНХ)</h5>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('auth.logout') }}" class="btn-nav">
+        <span class="icon"></span>
+        Выйти
+      </a>
+    </div>
+  </header>
+
+  <!-- Основное содержимое -->
+  <div class="main-content">
+    <div class="export-container">
+      <div class="form-header">
+        <h1 class="form-title">
+          📥 Экспорт студентов
+        </h1>
+        <p class="form-subtitle">
+          Экспортируйте данные студентов с фильтрацией по группе, куратору, старосте и периоду
+        </p>
+      </div>
+
+      <!-- Сообщения -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <span class="icon me-2">
+                  {% if category == 'success' %}✅
+                  {% elif category == 'danger' %}❌
+                  {% elif category == 'warning' %}⚠️
+                  {% else %}ℹ️
+                  {% endif %}
+                </span>
+                <div>{{ msg }}</div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Форма -->
+      <div class="form-card">
+        <form method="POST" id="exportForm" action="{{ url_for('dashboard.export_students_post') }}">
+          
+          <!-- Выбор формата экспорта -->
+          <div class="form-group">
+            <label class="form-label required">Формат экспорта:</label>
+            <div class="format-options">
+              <div class="format-option active" data-format="excel">
+                <span class="format-icon">📊</span>
+                Excel (.xlsx)
+              </div>
+              <div class="format-option" data-format="csv">
+                <span class="format-icon">📄</span>
+                CSV (.csv)
+              </div>
+              <div class="format-option" data-format="pdf">
+                <span class="format-icon">📋</span>
+                PDF (.pdf)
+              </div>
+            </div>
+            <input type="hidden" name="export_format" id="exportFormat" value="excel">
+          </div>
+
+          <!-- Выбор группы -->
+          <div class="form-group">
+            <label for="group" class="form-label">Группа:</label>
+            <select class="form-select" id="group" name="group_id">
+              <option value="">Все группы</option>
+              {% for group in groups %}
+              <option value="{{ group.id }}">{{ group.name }}</option>
+              {% endfor %}
+            </select>
+            <div class="info-text">Оставьте пустым для экспорта всех групп</div>
+          </div>
+
+          <!-- Выбор куратора -->
+          <div class="form-group">
+            <label for="curator" class="form-label">Куратор:</label>
+            <select class="form-select" id="curator" name="curator_id">
+              <option value="">Все кураторы</option>
+              {% for curator in curators %}
+              <option value="{{ curator.id }}">{{ curator.full_name }}</option>
+              {% endfor %}
+            </select>
+            <div class="info-text">Оставьте пустым для экспорта всех кураторов</div>
+          </div>
+
+          <!-- Выбор старосты (НОВОЕ ПОЛЕ) -->
+          <div class="form-group">
+            <label for="headman" class="form-label">Староста:</label>
+            <select class="form-select" id="headman" name="headman_id">
+              <option value="">Все старосты</option>
+              {% for headman in headmen %}
+              <option value="{{ headman.id }}">{{ headman.full_name }} ({{ headman.group_name }})</option>
+              {% endfor %}
+            </select>
+            <div class="info-text">Оставьте пустым для экспорта всех старост</div>
+          </div>
+
+          <!-- Период экспорта -->
+          <div class="form-group">
+            <label class="form-label required">Период экспорта:</label>
+            
+            <div class="period-buttons">
+              <div class="period-btn active" data-period="week">📅 За неделю</div>
+              <div class="period-btn" data-period="month">📅 За месяц</div>
+              <div class="period-btn" data-period="semester">📅 За семестр</div>
+              <div class="period-btn" data-period="year">📅 За год</div>
+              <div class="period-btn" data-period="all">📅 За всё время</div>
+              <div class="period-btn" data-period="custom">📅 Произвольный</div>
+            </div>
+            
+            <input type="hidden" name="period" id="period" value="week">
+            
+            <!-- Произвольный период (скрыт по умолчанию) -->
+            <div class="date-range-container" id="customDateRange">
+              <label class="form-label">Выберите период:</label>
+              <div class="date-input-group">
+                <div>
+                  <label class="form-label" for="start_date">Дата начала:</label>
+                  <input type="date" class="form-control" id="start_date" name="start_date">
+                </div>
+                <div>
+                  <label class="form-label" for="end_date">Дата окончания:</label>
+                  <input type="date" class="form-control" id="end_date" name="end_date">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Статистика пропусков -->
+          <div class="form-group">
+            <label class="form-label">Включить статистику пропусков:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="include_stats" name="include_stats" checked>
+              <label class="form-check-label" for="include_stats">
+                Включить количество пропусков по каждому студенту
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="include_reason" name="include_reason" checked>
+              <label class="form-check-label" for="include_reason">
+                Включить причины пропусков
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="exclude_status" name="exclude_status" checked>
+              <label class="form-check-label" for="exclude_status">
+                <strong>Убрать колонку "Статус" из экспорта</strong>
+              </label>
+            </div>
+          </div>
+
+          <!-- Предварительный просмотр -->
+          <div class="export-preview" id="previewContainer" style="display: none;">
+            <h6>📋 Предварительный просмотр:</h6>
+            <div id="previewContent">
+              <p>Выберите параметры для отображения предварительного просмотра...</p>
+            </div>
+            <div id="previewStats" class="preview-stats" style="display: none;">
+              <!-- Статистика будет добавляться здесь -->
+            </div>
+            <div class="student-count" id="studentCount">0 студентов</div>
+          </div>
+
+          <div class="form-actions">
+            <a href="{{ url_for('dashboard.admin_dashboard') }}" class="btn-back">
+              <span class="icon">←</span>
+              Назад
+            </a>
+            
+            <!-- Кнопка предварительного просмотра (теперь такого же размера) -->
+            <button type="button" class="btn-preview" id="previewBtn">
+              <span class="icon">👁️</span>
+              Предварительный просмотр
+            </button>
+            
+            <!-- Кнопка экспорта -->
+            <button type="submit" class="btn-submit" id="exportBtn">
+              <span class="icon">📥</span>
+              Экспортировать
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Инструкция -->
+      <div class="instructions">
+        <h5>📋 Инструкция по экспорту:</h5>
+        <ul>
+          <li><strong>Формат:</strong> Выберите Excel, CSV или PDF формат экспорта</li>
+          <li><strong>Фильтры:</strong> Укажите группу, куратора, старосту и период для выгрузки</li>
+          <li><strong>Период:</strong> Можно выбрать стандартные периоды или указать произвольные даты</li>
+          <li><strong>Статистика:</strong> Включите статистику пропусков для детальной информации</li>
+          <li><strong>Оптимизация:</strong> Рекомендуется убрать колонку "Статус" для уменьшения размера файла</li>
+          <li><strong>Предварительный просмотр:</strong> Проверьте данные перед экспортом</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя декоративная линия -->
+  <div class="bottom-line"></div>
+
+  <!-- Футер с копирайтом -->
+  <div class="footer">
+    <div class="footer-text">
+      © 2025г. Финансово-экономический колледж (РИНХ)
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Обработка выбора формата экспорта
+    document.querySelectorAll('.format-option').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.format-option').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        this.classList.add('active');
+        document.getElementById('exportFormat').value = this.dataset.format;
+        
+        // Анимация выбора
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 200);
+      });
+    });
+
+    // Обработка выбора периода
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.period-btn').forEach(b => {
+          b.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        const period = this.dataset.period;
+        document.getElementById('period').value = period;
+        
+        // Показать/скрыть выбор произвольной даты
+        const customDateRange = document.getElementById('customDateRange');
+        if (period === 'custom') {
+          customDateRange.classList.add('show');
+        } else {
+          customDateRange.classList.remove('show');
+        }
+        
+        // Анимация
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = 'scale(1)';
+        }, 200);
+      });
+    });
+
+    // Функция для получения реальных данных предпросмотра с сервера
+    async function fetchPreviewData() {
+      const groupId = document.getElementById('group').value;
+      const curatorId = document.getElementById('curator').value;
+      const headmanId = document.getElementById('headman').value;
+      const period = document.getElementById('period').value;
+      const startDate = document.getElementById('start_date').value;
+      const endDate = document.getElementById('end_date').value;
+      const includeStats = document.getElementById('include_stats').checked;
+      const includeReason = document.getElementById('include_reason').checked;
+      const excludeStatus = document.getElementById('exclude_status').checked;
+      
+      // Показать контейнер предпросмотра
+      const previewContainer = document.getElementById('previewContainer');
+      previewContainer.style.display = 'block';
+      
+      // Показать индикатор загрузки
+      const previewContent = document.getElementById('previewContent');
+      previewContent.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div><p class="mt-2">⏳ Загрузка данных...</p></div>';
+      
+      try {
+        // Создаем параметры запроса
+        const params = new URLSearchParams();
+        if (groupId) params.append('group_id', groupId);
+        if (curatorId) params.append('curator_id', curatorId);
+        if (headmanId) params.append('headman_id', headmanId);
+        params.append('period', period);
+        if (startDate && period === 'custom') params.append('start_date', startDate);
+        if (endDate && period === 'custom') params.append('end_date', endDate);
+        params.append('include_stats', includeStats);
+        params.append('include_reason', includeReason);
+        params.append('exclude_status', excludeStatus);
+        
+        // Используем правильный URL
+        const apiUrl = '{{ url_for("dashboard.export_preview") }}';
+        console.log('Запрос к API:', apiUrl + '?' + params.toString());
+        
+        // Отправляем запрос на сервер
+        const response = await fetch(apiUrl + '?' + params.toString());
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+          if (response.status === 403) {
+            // Доступ запрещен
+            const data = await response.json();
+            throw new Error(data.error || 'Доступ запрещен');
+          } else if (response.status === 404) {
+            // Попробуем альтернативный URL
+            const altResponse = await fetch('{{ url_for("dashboard.export_preview_data") }}?' + params.toString());
+            if (!altResponse.ok) {
+              throw new Error(`API недоступен (404)`);
+            }
+            const data = await altResponse.json();
+            displayPreviewData(data);
+            return;
+          } else {
+            throw new Error(`HTTP error ${response.status}`);
+          }
+        }
+        
+        const data = await response.json();
+        displayPreviewData(data);
+        
+      } catch (error) {
+        previewContent.innerHTML = `<p class="text-danger">❌ Ошибка при загрузке данных: ${error.message}</p>`;
+        document.getElementById('studentCount').textContent = '0 студентов';
+        document.getElementById('previewStats').style.display = 'none';
+      }
+      
+      // Анимация
+      previewContainer.style.opacity = '0';
+      previewContainer.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        previewContainer.style.transition = 'all 0.5s ease';
+        previewContainer.style.opacity = '1';
+        previewContainer.style.transform = 'translateY(0)';
+      }, 100);
+    }
+    
+    // Функция для отображения данных предпросмотра
+    function displayPreviewData(data) {
+      const previewContent = document.getElementById('previewContent');
+      
+      if (data.success && data.students && data.students.length > 0) {
+        let previewHtml = '<ul class="preview-list">';
+        
+        // Показываем только первых 10 студентов для предпросмотра
+        data.students.slice(0, 10).forEach(student => {
+          previewHtml += `
+            <li>
+              <div>
+                <strong>${student.name}</strong><br>
+                <small class="text-muted">Группа: ${student.group}</small>
+              </div>
+              <div>
+                <span class="badge bg-primary">${student.group}</span>
+                ${student.misses > 0 ? `<span class="badge bg-warning text-dark ms-1">${student.misses} проп.</span>` : ''}
+              </div>
+            </li>
+          `;
+        });
+        
+        previewHtml += '</ul>';
+        
+        // Если студентов больше 10, показываем сообщение
+        if (data.count > 10) {
+          previewHtml += `<p class="text-muted mt-2">... и еще ${data.count - 10} студентов</p>`;
+        }
+        
+        previewContent.innerHTML = previewHtml;
+        
+        // Обновляем счетчик
+        document.getElementById('studentCount').textContent = `${data.count} студентов`;
+        
+        // Показываем статистику
+        const previewStats = document.getElementById('previewStats');
+        if (data.stats && data.stats.students_count > 0) {
+          previewStats.style.display = 'flex';
+          previewStats.innerHTML = `
+            <div class="stat-item">
+              <div class="stat-value">${data.stats.groups_count}</div>
+              <div class="stat-label">Групп</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${data.stats.students_count}</div>
+              <div class="stat-label">Студентов</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${data.stats.absences_count}</div>
+              <div class="stat-label">Пропусков</div>
+            </div>
+          `;
+        } else {
+          previewStats.style.display = 'none';
+        }
+      } else if (data.success && data.count === 0) {
+        previewContent.innerHTML = '<p class="text-muted">Нет данных, соответствующих выбранным фильтрам.</p>';
+        document.getElementById('studentCount').textContent = '0 студентов';
+        document.getElementById('previewStats').style.display = 'none';
+      } else {
+        previewContent.innerHTML = `<p class="text-danger">❌ Ошибка: ${data.error || 'Неизвестная ошибка'}</p>`;
+        document.getElementById('studentCount').textContent = '0 студентов';
+        document.getElementById('previewStats').style.display = 'none';
+      }
+    }
+
+    // Предварительный просмотр
+    document.getElementById('previewBtn').addEventListener('click', fetchPreviewData);
+
+    // Автоматический предпросмотр при изменении фильтров
+    let previewTimeout;
+    ['group', 'curator', 'headman', 'period', 'start_date', 'end_date', 'include_stats', 'include_reason', 'exclude_status'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('change', () => {
+          // Отменяем предыдущий таймаут
+          if (previewTimeout) {
+            clearTimeout(previewTimeout);
+          }
+          
+          // Устанавливаем новый таймаут для предотвращения множественных запросов
+          previewTimeout = setTimeout(fetchPreviewData, 500);
+        });
+      }
+    });
+
+    // Валидация формы при экспорте
+    document.getElementById('exportForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const exportBtn = document.getElementById('exportBtn');
+      const previewBtn = document.getElementById('previewBtn');
+      
+      // Проверка произвольного периода
+      const period = document.getElementById('period').value;
+      if (period === 'custom') {
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        
+        if (!startDate || !endDate) {
+          showAlert('Пожалуйста, выберите даты для произвольного периода', 'warning');
+          return false;
+        }
+        
+        if (new Date(startDate) > new Date(endDate)) {
+          showAlert('Дата начала не может быть позже даты окончания', 'warning');
+          return false;
+        }
+      }
+      
+      // Показать индикатор загрузки на обеих кнопках
+      const originalExportText = exportBtn.innerHTML;
+      const originalPreviewText = previewBtn.innerHTML;
+      
+      exportBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Создание файла...';
+      previewBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Обработка...';
+      
+      exportBtn.disabled = true;
+      previewBtn.disabled = true;
+      exportBtn.style.opacity = '0.7';
+      previewBtn.style.opacity = '0.7';
+      
+      try {
+        // Создаем FormData из формы
+        const formData = new FormData(this);
+        
+        // Добавляем параметр для исключения колонки статуса
+        const excludeStatus = document.getElementById('exclude_status').checked;
+        formData.append('exclude_status', excludeStatus);
+        
+        // Отправляем POST запрос на правильный маршрут
+        const response = await fetch('{{ url_for("dashboard.export_students_post") }}', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          // Создаем blob из ответа
+          const blob = await response.blob();
+          
+          // Получаем имя файла из заголовков
+          const contentDisposition = response.headers.get('Content-Disposition');
+          let filename = 'students_export.xlsx';
+          
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+            if (filenameMatch) {
+              filename = filenameMatch[1];
+            }
+          }
+          
+          // Создаем ссылку для скачивания
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          
+          // Очищаем
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          showAlert('✅ Файл успешно создан и скачивается', 'success');
+        } else {
+          const errorText = await response.text();
+          showAlert(`❌ Ошибка при экспорте: ${response.status} ${response.statusText}`, 'danger');
+          console.error('Export error:', errorText);
+        }
+      } catch (error) {
+        showAlert(`❌ Ошибка при экспорте: ${error.message}`, 'danger');
+        console.error('Export error:', error);
+      } finally {
+        // Восстанавливаем кнопки
+        exportBtn.innerHTML = originalExportText;
+        previewBtn.innerHTML = originalPreviewText;
+        exportBtn.disabled = false;
+        previewBtn.disabled = false;
+        exportBtn.style.opacity = '1';
+        previewBtn.style.opacity = '1';
+      }
+      
+      return false;
+    });
+
+    // Функция показа уведомления
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+          <span class="icon me-2">${type === 'warning' ? '⚠️' : type === 'success' ? '✅' : type === 'danger' ? '❌' : 'ℹ️'}</span>
+          <div>${message}</div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      // Вставляем уведомление перед формой
+      const formCard = document.querySelector('.form-card');
+      formCard.parentNode.insertBefore(alertDiv, formCard);
+      
+      // Автоматическое скрытие через 5 секунд
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          const bsAlert = new bootstrap.Alert(alertDiv);
+          bsAlert.close();
+        }
+      }, 5000);
+    }
+
+    // Анимация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+      const exportContainer = document.querySelector('.export-container');
+      exportContainer.style.opacity = '0';
+      exportContainer.style.transform = 'translateY(30px) scale(0.95)';
+      
+      setTimeout(() => {
+        exportContainer.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        exportContainer.style.opacity = '1';
+        exportContainer.style.transform = 'translateY(0) scale(1)';
+      }, 200);
+      
+      // Анимация элементов формы
+      const formGroups = document.querySelectorAll('.form-group, .instructions');
+      formGroups.forEach((group, index) => {
+        group.style.opacity = '0';
+        group.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+          group.style.transition = 'all 0.5s ease';
+          group.style.opacity = '1';
+          group.style.transform = 'translateX(0)';
+        }, 300 + (index * 100));
+      });
+      
+      // Анимация кнопок
+      const buttons = document.querySelectorAll('.btn-back, .btn-preview, .btn-submit');
+      buttons.forEach(btn => {
+        btn.style.opacity = '0';
+        btn.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          btn.style.transition = 'all 0.5s ease';
+          btn.style.opacity = '1';
+          btn.style.transform = 'translateY(0)';
+        }, 800);
+      });
+      
+      // Автоматическая анимация для кнопок периода
+      const periodButtons = document.querySelectorAll('.period-btn');
+      periodButtons.forEach((btn, index) => {
+        btn.style.opacity = '0';
+        btn.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+          btn.style.transition = 'all 0.3s ease';
+          btn.style.opacity = '1';
+          btn.style.transform = 'scale(1)';
+        }, 400 + (index * 50));
+      });
+      
+      // Автоматическая анимация для форматов
+      const formatOptions = document.querySelectorAll('.format-option');
+      formatOptions.forEach((option, index) => {
+        option.style.opacity = '0';
+        option.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+          option.style.transition = 'all 0.3s ease';
+          option.style.opacity = '1';
+          option.style.transform = 'scale(1)';
+        }, 600 + (index * 50));
+      });
+      
+      // Автоматически загружаем предпросмотр при открытии страницы
+      setTimeout(fetchPreviewData, 1000);
+    });
+
+    // Автоматическая настройка минимальной и максимальной даты
+    document.getElementById('start_date').addEventListener('change', function() {
+      const endDateInput = document.getElementById('end_date');
+      endDateInput.min = this.value;
+      
+      if (new Date(endDateInput.value) < new Date(this.value)) {
+        endDateInput.value = this.value;
+      }
+      
+      // Обновляем предпросмотр
+      fetchPreviewData();
+    });
+
+    document.getElementById('end_date').addEventListener('change', function() {
+      const startDateInput = document.getElementById('start_date');
+      startDateInput.max = this.value;
+      
+      if (new Date(startDateInput.value) > new Date(this.value)) {
+        startDateInput.value = this.value;
+      }
+      
+      // Обновляем предпросмотр
+      fetchPreviewData();
+    });
+
+    // Подсветка обязательных полей
+    document.querySelectorAll('[required]').forEach(field => {
+      field.addEventListener('blur', function() {
+        if (!this.value) {
+          this.style.borderColor = '#f44336';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(244, 67, 54, 0.25)';
+        } else {
+          this.style.borderColor = '#4caf50';
+          this.style.boxShadow = '0 0 0 0.25rem rgba(76, 175, 80, 0.25)';
+        }
+      });
+      
+      field.addEventListener('focus', function() {
+        this.style.borderColor = '#0073e6';
+        this.style.boxShadow = '0 0 0 0.25rem rgba(0, 115, 230, 0.25)';
+      });
+    });
+  </script>
+</body>
+</html>
